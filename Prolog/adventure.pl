@@ -1,7 +1,7 @@
 /* Adventure, by Strzecha. */
 
 :- dynamic i_am_at/1, at/2, holding/1, is_discovered/1.
-:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_discovered(_)).
+:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_discovered(_)), retractall(holding(_)).
 
 i_am_at(someplace).
 
@@ -9,9 +9,16 @@ path(someplace, n, jungle).
 path(jungle, s, someplace).
 
 at(thing, someplace).
+at(tree, someplace).
+
+is_pickable(thing).
 
 holding(notebook).
-holding(phone).
+holding(ax).
+
+is_reusable(ax).
+
+usable(ax, tree, wood).
 
 is_discovered(someplace).
 
@@ -20,15 +27,59 @@ is_discovered(someplace).
 take(X) :-
         i_am_at(Place),
         at(X, Place),
+        is_pickable(X),
         retract(at(X, Place)),
         assert(holding(X)),
         write('You picked up '), write(X),
+        !, nl.
+
+take(X) :-
+        i_am_at(Place),
+        at(X, Place),
+        write('You can''t pick it up.'),
         !, nl.
 
 take(_) :-
         write('I don''t see it here.'),
         nl.
 
+use_up(Object) :-
+        is_reusable(Object), !.
+
+use_up(Object) :-
+        holding(Object),
+        retract(holding(Object)), !.
+
+use_up(Object) :-
+        i_am_at(Place),
+        at(Object, Place),
+        retract(at(Object, Place)), !.
+
+available(Object) :-
+        holding(Object), !.
+
+available(Object) :-
+        i_am_at(Place),
+        at(Object, Place), !.
+
+use(Object1, Object2) :-
+        available(Object1),
+        available(Object2),
+        usable(Object1, Object2, Result),
+        use_up(Object1),
+        use_up(Object2),
+        assert(holding(Result)),
+        write('You got '), write(Result),
+        nl, !.
+
+use(Object1, Object2) :-
+        available(Object1),
+        write('You don''t have '), write(Object2), 
+        nl, !.
+
+use(Object1, _) :-
+        write('You don''t have '), write(Object1),
+        nl, !.
 
 /* These rules describe how to put down an object. */
 
