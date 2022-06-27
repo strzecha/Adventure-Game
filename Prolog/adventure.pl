@@ -1,7 +1,7 @@
-/* Adventure, by Strzecha. */
-
 :- dynamic i_am_at/1, at/2, holding/1, is_discovered/1.
 :- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_discovered(_)), retractall(holding(_)).
+
+/* Facts about the world */
 
 i_am_at(someplace).
 
@@ -16,12 +16,9 @@ at(flaming_torch, someplace).
 
 at(native, jungle).
 
-speak(native) :-
-        write('Do you want an ax? I will give it to you, if you have something glowing.').
-
 exchange(native, phone, ax).
 
-is_dark(beach).
+is_dark(jungle).
 
 is_pickable(thing).
 is_pickable(flaming_torch).
@@ -35,26 +32,28 @@ usable(ax, tree, wood).
 
 is_discovered(someplace).
 
-/* These rules describe how to pick up an object. */
+/* These rules describe how to pick up an object */
 
-take(X) :-
-        i_am_at(Place),
-        at(X, Place),
-        is_pickable(X),
-        retract(at(X, Place)),
-        assert(holding(X)),
-        write('You picked up '), write(X),
+take(Object) :-
+        i_am_at(Location),
+        at(Object, Location),
+        is_pickable(Object),
+        retract(at(Object, Location)),
+        assert(holding(Object)),
+        write('You picked up '), write(Object),
         !, nl.
 
-take(X) :-
-        i_am_at(Place),
-        at(X, Place),
+take(Object) :-
+        i_am_at(Location),
+        at(Object, Location),
         write('You can''t pick it up.'),
         !, nl.
 
 take(_) :-
         write('I don''t see it here.'),
         nl.
+
+/* These rules describe how to use objects */
 
 use_up(Object) :-
         is_reusable(Object), !.
@@ -64,16 +63,16 @@ use_up(Object) :-
         retract(holding(Object)), !.
 
 use_up(Object) :-
-        i_am_at(Place),
-        at(Object, Place),
-        retract(at(Object, Place)), !.
+        i_am_at(Location),
+        at(Object, Location),
+        retract(at(Object, Location)).
 
 available(Object) :-
         holding(Object), !.
 
 available(Object) :-
-        i_am_at(Place),
-        at(Object, Place), !.
+        i_am_at(Location),
+        at(Object, Location).
 
 use(Object1, Object2) :-
         available(Object1),
@@ -92,28 +91,32 @@ use(Object1, Object2) :-
 
 use(Object1, _) :-
         write('You don''t have '), write(Object1),
-        nl, !.
-
-/* These rules describe how to put down an object. */
-
-drop(X) :-
-        holding(X),
-        i_am_at(Place),
-        retract(holding(X)),
-        assert(at(X, Place)),
-        write('You dropped '), write(X),
-        !, nl.
-
-drop(_) :-
-        write('You aren''t holding it!'),
         nl.
 
+/* These rules describe how to put down an object */
+
+drop(Object) :-
+        holding(Object),
+        i_am_at(Location),
+        retract(holding(Object)),
+        assert(at(Object, Location)),
+        write('You dropped '), write(Object),
+        !, nl.
+
+drop(Object) :-
+        write('You aren''t holding '), write(Object),
+        nl.
+
+/* These rules describe how to show your inventory */
+
 inventory :-
-        holding(X),
-        write(X), nl,
+        holding(Object),
+        write(Object), nl,
         fail.
 
 inventory.
+
+/* These rules describe how to examine objects */
 
 examine(Object) :-
         available(Object),
@@ -127,29 +130,29 @@ examine(Object) :-
 
 examine(Object) :-
         write('There is no '), write(Object),
-        nl, !.
-        
-/**/
+        nl.
+
+/* These rules describe how to interact with NPCs */
 
 talk(NPC) :-
-        i_am_at(Place),
-        at(NPC, Place),
+        i_am_at(Location),
+        at(NPC, Location),
         speak(NPC),
         nl, !.
 
 talk(NPC) :-
-        i_am_at(Place),
-        at(NPC, Place),
+        i_am_at(Location),
+        at(NPC, Location),
         write('You can''t do this'),
         nl, !.
 
 talk(NPC) :-
         write('There is no '), write(NPC), 
-        nl, !.
+        nl.
 
 give(Object, NPC) :-
-        i_am_at(Place),
-        at(NPC, Place),
+        i_am_at(Location),
+        at(NPC, Location),
         exchange(NPC, Object, Gift),
         holding(Object),
         retract(holding(Object)),
@@ -158,24 +161,24 @@ give(Object, NPC) :-
         nl, !.
 
 give(Object, NPC) :-
-        i_am_at(Place),
-        at(NPC, Place),
+        i_am_at(Location),
+        at(NPC, Location),
         holding(Object),
         write('He don''t want it'),
         nl, !.
 
 give(Object, NPC) :-
-        i_am_at(Place),
-        at(NPC, Place),
+        i_am_at(Location),
+        at(NPC, Location),
         write('You don''t have '), write(Object),
         nl, !.
 
 give(_, NPC) :-
         write('There is no '), write(NPC),
-        nl, !.
+        nl.
 
 
-/* These rules define the direction letters as calls to go/1. */
+/* These rules define the direction letters as calls to go/1 */
 
 n :- go(n).
 
@@ -186,77 +189,84 @@ e :- go(e).
 w :- go(w).
 
 
-/* This rule tells how to move in a given direction. */
+/* This rule tells how to move in a given direction and discover new location */
 
 go(Direction) :-
         i_am_at(Here),
-        path(Here, Direction, Place),
+        path(Here, Direction, Location),
         retract(i_am_at(Here)),
-        assert(i_am_at(Place)),
-        discover(Place),
+        assert(i_am_at(Location)),
+        discover(Location),
         !, look.
 
 go(_) :-
         write('You can''t go that way.').
 
-discover(Place) :-
-        is_discovered(Place).
+discover(Location) :-
+        is_discovered(Location), !.
 
-discover(Place) :-
-        assert(is_discovered(Place)).
+discover(Location) :-
+        assert(is_discovered(Location)).
 
 
-/* This rule tells how to look about you. */
+/* This rule set up a loop to mention all the objects in location */
+
+notice_objects_at(Location) :-
+        at(Object, Location),
+        write(Object), write(', '),
+        fail.
+
+/* This rule tells how to look about you */
+
+print_objects(Location) :-
+        i_am_at(Location),
+        write('There are: '),
+        notice_objects_at(Location),
+        nl, !.
+
+print_objects(_).
 
 look :-
-        i_am_at(Place),
-        is_dark(Place),
+        i_am_at(Location),
+        is_dark(Location),
         holding(flaming_torch),
-        describe(Place),
+        describe(Location),
         nl,
-        notice_objects_at(Place),
+        print_objects(Location),
         nl, !.
 
 look :-
-        i_am_at(Place),
-        is_dark(Place),
+        i_am_at(Location),
+        is_dark(Location),
         write('You see darkness only. You need some light.'),
         nl, !.
 
 look :-
-        i_am_at(Place),
-        describe(Place),
+        i_am_at(Location),
+        describe(Location),
         nl,
-        notice_objects_at(Place),
-        nl, !.
+        print_objects(Location),
+        nl.
 
-print(Place) :-
-        is_discovered(Place),
-        write(Place), !.
+
+/* These rules describe how to check where you can go */
+
+print(Location) :-
+        is_discovered(Location),
+        write(Location), !.
 
 print(_) :-
         write('undiscovered').
 
 look_around :-
-        i_am_at(Place),
-        path(Place, Direction, Somewhere),
+        i_am_at(Location),
+        path(Location, Direction, Somewhere),
         write(Direction), write(' -> '), print(Somewhere),
         nl, fail.
 
 look_around.
 
-/* These rules set up a loop to mention all the objects
-   in your vicinity. */
-
-notice_objects_at(Place) :-
-        at(X, Place),
-        write('There is a '), write(X), write(' here.'), nl,
-        fail.
-
-notice_objects_at(_).
-
-
-/* This rule tells how to die. */
+/* This rule tells how to die */
 
 die :-
         finish.
@@ -273,36 +283,48 @@ finish :-
         nl.
 
 
-/* This rule just writes out game instructions. */
+/* This rule just writes out game instructions */
 
 instructions :-
         nl,
         write('Enter commands using standard Prolog syntax.'), nl,
         write('Available commands are:'), nl,
-        write('start.             -- to start the game.'), nl,
-        write('n.  s.  e.  w.     -- to go in that direction.'), nl,
-        write('take(Object).      -- to pick up an object.'), nl,
-        write('drop(Object).      -- to put down an object.'), nl,
-        write('look.              -- to look around you again.'), nl,
-        write('instructions.      -- to see this message again.'), nl,
-        write('halt.              -- to end the game and quit.'), nl,
+        write('start.                   -- to start the game.'), nl,
+        write('n.  s.  e.  w.           -- to go in that direction.'), nl,
+        write('take(Object).            -- to pick up an object.'), nl,
+        write('drop(Object).            -- to put down an object.'), nl,
+        write('use(Object, Object).     -- to use the objects together.'), nl,
+        write('inventory.               -- to see the objects you are holding.'), nl,
+        write('look.                    -- to inspect current locations.'), nl,
+        write('look_around.             -- to see where you can go.'), nl,
+        write('talk(NPC).               -- to talk with NPC.'), nl,
+        write('give(Object, NPC).       -- to give an object to NPC'), nl,
+        write('instructions.            -- to see this message again.'), nl,
+        write('halt.                    -- to end the game and quit.'), nl,
         nl.
 
 
-/* This rule prints out instructions and tells where you are. */
+/* This rule prints out instructions and tells where you are */
 
 start :-
         instructions,
         look.
 
 
-/* These rules describe the various rooms.  Depending on
-   circumstances, a room may have more than one description. */
+/* These rules describe the various locations */
 
 describe(someplace) :- write('You are someplace.'), nl.
 describe(jungle) :- write('You are in the jungle.'), nl.
 describe(beach) :- write('You are on the beach.'), nl.
 
+/* These rules describe the various objects */
+
 describe(phone) :- write('Works, but no signal.'), nl.
 describe(ax) :- write('Perfect for cutting trees.'), nl.
+
+/* These rules describe the various NPCs */
+
+/* These rules describe the dialogs with NPCs */
+
+speak(native) :- write('Do you want an ax? I will give it to you, if you have something glowing.').
 
