@@ -12,8 +12,12 @@ path(beach, w, someplace).
 
 at(thing, someplace).
 at(tree, someplace).
+at(flaming_torch, someplace).
+
+is_dark(beach).
 
 is_pickable(thing).
+is_pickable(flaming_torch).
 
 holding(notebook).
 holding(ax).
@@ -140,10 +144,25 @@ discover(Place) :-
 
 look :-
         i_am_at(Place),
+        is_dark(Place),
+        holding(flaming_torch),
         describe(Place),
         nl,
         notice_objects_at(Place),
-        nl.
+        nl, !.
+
+look :-
+        i_am_at(Place),
+        is_dark(Place),
+        write('You see darkness only. You need some light.'),
+        nl, !.
+
+look :-
+        i_am_at(Place),
+        describe(Place),
+        nl,
+        notice_objects_at(Place),
+        nl, !.
 
 print(Place) :-
         is_discovered(Place),
