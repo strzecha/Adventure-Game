@@ -14,13 +14,20 @@ at(thing, someplace).
 at(tree, someplace).
 at(flaming_torch, someplace).
 
+at(native, jungle).
+
+speak(native) :-
+        write('Do you want an ax? I will give it to you, if you have something glowing.').
+
+exchange(native, phone, ax).
+
 is_dark(beach).
 
 is_pickable(thing).
 is_pickable(flaming_torch).
 
 holding(notebook).
-holding(ax).
+holding(phone).
 
 is_reusable(ax).
 
@@ -107,6 +114,51 @@ inventory :-
         fail.
 
 inventory.
+
+/**/
+
+talk(NPC) :-
+        i_am_at(Place),
+        at(NPC, Place),
+        speak(NPC),
+        nl, !.
+
+talk(NPC) :-
+        i_am_at(Place),
+        at(NPC, Place),
+        write('You can''t do this'),
+        nl, !.
+
+talk(NPC) :-
+        write('There is no '), write(NPC), 
+        nl, !.
+
+give(Object, NPC) :-
+        i_am_at(Place),
+        at(NPC, Place),
+        exchange(NPC, Object, Gift),
+        holding(Object),
+        retract(holding(Object)),
+        assert(holding(Gift)),
+        write('You got '), write(Gift),
+        nl, !.
+
+give(Object, NPC) :-
+        i_am_at(Place),
+        at(NPC, Place),
+        holding(Object),
+        write('He don''t want it'),
+        nl, !.
+
+give(Object, NPC) :-
+        i_am_at(Place),
+        at(NPC, Place),
+        write('You don''t have '), write(Object),
+        nl, !.
+
+give(_, NPC) :-
+        write('There is no '), write(NPC),
+        nl, !.
 
 
 /* These rules define the direction letters as calls to go/1. */
