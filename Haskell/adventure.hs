@@ -102,6 +102,7 @@ blankItem = newItem
 
 -- recipes
 recipeBanana = newRecipe{recipeItem1=phone, recipeItem2=pen, recipeProduct=thing}
+recipeSign = newRecipe{recipeItem1=pen, recipeItem2=thing, recipeProduct=sign}
 
 -- describing
 join :: [Item] -> String
@@ -175,9 +176,20 @@ findRecipe item1 item2 (recipe:recipes) =
         findRecipe item1 item2 recipes 
 
 craftItem :: Item -> Item -> Recipe -> GameState -> GameState
-craftItem item1 item2 recipe state = state{playerItems=item:inventory, output="You got "++(itemName item)}
+craftItem item1 item2 recipe state = state{playerItems=item:inventory, currentLocation=location{locationItems=locItems},
+                                           output="You got "++(itemName item)}
     where
-        inventory = removeItem item2 (removeItem item1 (playerItems state))
+        location = (currentLocation state)
+
+        inventory = if elem item2 (playerItems state) then
+                        removeItem item1 (removeItem item2 (playerItems state))
+                    else
+                        removeItem item1 (playerItems state)
+
+        locItems =  if elem item2 (playerItems state) then
+                        (locationItems location)
+                    else
+                        removeItem item2 (locationItems location)
         item = (recipeProduct recipe)
 
 checkRecipe :: Item -> Item -> GameState -> GameState
@@ -192,7 +204,9 @@ use :: String -> String -> GameState -> GameState
 use itemName1 itemName2 state = tryCraft item1 item2 state
     where
         item1 = itemInList itemName1 (playerItems state)
-        item2 = itemInList itemName2 ((locationItems (currentLocation state))++(playerItems state))
+        itemLoc = itemInList itemName2 (locationItems (currentLocation state))
+        itemInv = itemInList itemName2 (playerItems state)
+        item2 = if itemInv /= Nothing then itemInv else itemLoc
 
         tryCraft :: Maybe Item -> Maybe Item -> GameState -> GameState
         tryCraft item1 item2 = do
@@ -271,7 +285,7 @@ gameLoop = do
     return ()
     where
         startingState = do
-            return (GameState someplace False "" [phone, pen] [recipeBanana])
+            return (GameState someplace False "" [phone, pen] [recipeBanana, recipeSign])
         play state = do
             newState <- playFrame state
             if gameOver newState then
