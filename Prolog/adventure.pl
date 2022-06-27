@@ -115,6 +115,20 @@ inventory :-
 
 inventory.
 
+examine(Object) :-
+        available(Object),
+        describe(Object),
+        !.
+
+examine(Object) :-
+        available(Object),
+        write('You don''t know anything about '), write(Object),
+        nl, !.
+
+examine(Object) :-
+        write('There is no '), write(Object),
+        nl, !.
+        
 /**/
 
 talk(NPC) :-
@@ -287,5 +301,8 @@ start :-
 
 describe(someplace) :- write('You are someplace.'), nl.
 describe(jungle) :- write('You are in the jungle.'), nl.
-describe(beach) :- write('You are on the beach. '), nl.
+describe(beach) :- write('You are on the beach.'), nl.
+
+describe(phone) :- write('Works, but no signal.'), nl.
+describe(ax) :- write('Perfect for cutting trees.'), nl.
 
