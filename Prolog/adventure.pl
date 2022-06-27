@@ -7,6 +7,8 @@ i_am_at(someplace).
 
 path(someplace, n, jungle).
 path(jungle, s, someplace).
+path(someplace, e, beach).
+path(beach, w, someplace).
 
 at(thing, someplace).
 at(tree, someplace).
@@ -143,13 +145,18 @@ look :-
         notice_objects_at(Place),
         nl.
 
+print(Place) :-
+        is_discovered(Place),
+        write(Place), !.
+
+print(_) :-
+        write('undiscovered').
 
 look_around :-
         i_am_at(Place),
         path(Place, Direction, Somewhere),
-        is_discovered(Somewhere),
-        write(Direction), write(' -> '), write(Somewhere),
-        fail, nl.
+        write(Direction), write(' -> '), print(Somewhere),
+        nl, fail.
 
 look_around.
 
@@ -209,4 +216,5 @@ start :-
 
 describe(someplace) :- write('You are someplace.'), nl.
 describe(jungle) :- write('You are in the jungle.'), nl.
+describe(beach) :- write('You are on the beach. '), nl.
 
