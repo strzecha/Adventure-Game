@@ -1,8 +1,9 @@
 data GameState = GameState 
-    { currentLocation :: Location
-    , gameOver        :: Bool
-    , output          :: String
-    , playerItems     :: [Item]
+    { currentLocation   :: Location
+    , gameOver          :: Bool
+    , output            :: String
+    , playerItems       :: [Item]
+    , recipes           :: [Recipe]
     }
 
 data Location = Location
@@ -23,6 +24,13 @@ data Item = Item
     ,   itemPickable     :: Bool
     } deriving (Eq, Show)
 
+data Recipe = Recipe
+    {
+        recipeItem1     :: Item
+    ,   recipeItem2     :: Item
+    ,   recipeProduct   :: Item
+    }
+
 newLocation :: Location
 newLocation = Location{
     locationName = "",
@@ -40,6 +48,14 @@ newItem = Item{
     itemDescription = "",
     itemPickable = False
 }
+
+newRecipe :: Recipe
+newRecipe = Recipe{
+    recipeItem1 = blankItem,
+    recipeItem2 = blankItem,
+    recipeProduct = blankItem
+}
+
 
 introductionText = [
     ""
@@ -81,6 +97,11 @@ phone = newItem{itemName="phone", itemDescription="Glowing", itemPickable=True}
 pen = newItem{itemName="pen", itemDescription="Shiny", itemPickable=True}
 thing = newItem{itemName="thing", itemDescription="Strange", itemPickable=True}
 sign = newItem{itemName="sign", itemDescription="W - left, E - right"}
+
+blankItem = newItem
+
+-- recipes
+recipeBanana = newRecipe{recipeItem1=phone, recipeItem2=pen, recipeProduct=thing}
 
 -- describing
 join :: [Item] -> String
@@ -144,6 +165,45 @@ examine itName state = printMessage (message item) state
                 Just it -> itemDescription it
                 Nothing -> "There is no "++itName
 
+findRecipe :: Item -> Item -> [Recipe] -> Maybe Recipe
+findRecipe _ _ [] = Nothing
+findRecipe item1 item2 (recipe:recipes) = 
+    if (recipeItem1 recipe) == item1 && (recipeItem2 recipe) == item2 || 
+       (recipeItem2 recipe) == item1 && (recipeItem1 recipe) == item2 then
+        Just recipe
+    else
+        findRecipe item1 item2 recipes 
+
+craftItem :: Item -> Item -> Recipe -> GameState -> GameState
+craftItem item1 item2 recipe state = state{playerItems=item:inventory, output="You got "++(itemName item)}
+    where
+        inventory = removeItem item2 (removeItem item1 (playerItems state))
+        item = (recipeProduct recipe)
+
+checkRecipe :: Item -> Item -> GameState -> GameState
+checkRecipe item1 item2 state = 
+    case recipe of
+        Nothing -> printMessage "You can't use it that way" state
+        Just recipe -> craftItem item1 item2 recipe state
+    where
+        recipe = findRecipe item1 item2 (recipes state)
+
+use :: String -> String -> GameState -> GameState
+use itemName1 itemName2 state = tryCraft item1 item2 state
+    where
+        item1 = itemInList itemName1 (playerItems state)
+        item2 = itemInList itemName2 ((locationItems (currentLocation state))++(playerItems state))
+
+        tryCraft :: Maybe Item -> Maybe Item -> GameState -> GameState
+        tryCraft item1 item2 = do
+            case item1 of
+                Nothing -> printMessage ("You don't have "++itemName1)
+                Just item1 -> case item2 of
+                                Nothing -> printMessage ("You don't have "++itemName2)
+                                Just item2 -> checkRecipe item1 item2
+
+
+
 itemInList :: String -> [Item] -> Maybe Item
 itemInList itName [] = Nothing
 itemInList itName (item:items) = do
@@ -198,6 +258,7 @@ parseCommand input =
         "w" -> move input
         "e" -> move input
         "examine" -> examine ((words input)!!1)
+        "use" -> use ((words input)!!1) ((words input)!!2)
         "inventory" -> showInventory 
         "pick" -> pickUp ((words input)!!1)
         "quit" -> quit
@@ -210,7 +271,7 @@ gameLoop = do
     return ()
     where
         startingState = do
-            return (GameState someplace False "" [phone, pen])
+            return (GameState someplace False "" [phone, pen] [recipeBanana])
         play state = do
             newState <- playFrame state
             if gameOver newState then
