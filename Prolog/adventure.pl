@@ -1,27 +1,28 @@
 /* Adventure, by Strzecha. */
 
-:- dynamic i_am_at/1, at/2, holding/1.
-:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)).
+:- dynamic i_am_at/1, at/2, holding/1, is_discovered/1.
+:- retractall(at(_, _)), retractall(i_am_at(_)), retractall(alive(_)), retractall(is_discovered(_)).
 
 i_am_at(someplace).
 
-path(someplace, n, someplace).
+path(someplace, n, jungle).
+path(jungle, s, someplace).
 
 at(thing, someplace).
 
-/* These rules describe how to pick up an object. */
+holding(notebook).
+holding(phone).
 
-take(X) :-
-        holding(X),
-        write('You''re already holding it!'),
-        !, nl.
+is_discovered(someplace).
+
+/* These rules describe how to pick up an object. */
 
 take(X) :-
         i_am_at(Place),
         at(X, Place),
         retract(at(X, Place)),
         assert(holding(X)),
-        write('OK.'),
+        write('You picked up '), write(X),
         !, nl.
 
 take(_) :-
@@ -36,12 +37,19 @@ drop(X) :-
         i_am_at(Place),
         retract(holding(X)),
         assert(at(X, Place)),
-        write('OK.'),
+        write('You dropped '), write(X),
         !, nl.
 
 drop(_) :-
         write('You aren''t holding it!'),
         nl.
+
+inventory :-
+        holding(X),
+        write(X), nl,
+        fail.
+
+inventory.
 
 
 /* These rules define the direction letters as calls to go/1. */
@@ -59,13 +67,20 @@ w :- go(w).
 
 go(Direction) :-
         i_am_at(Here),
-        path(Here, Direction, There),
+        path(Here, Direction, Place),
         retract(i_am_at(Here)),
-        assert(i_am_at(There)),
+        assert(i_am_at(Place)),
+        discover(Place),
         !, look.
 
 go(_) :-
         write('You can''t go that way.').
+
+discover(Place) :-
+        is_discovered(Place).
+
+discover(Place) :-
+        assert(is_discovered(Place)).
 
 
 /* This rule tells how to look about you. */
@@ -77,6 +92,15 @@ look :-
         notice_objects_at(Place),
         nl.
 
+
+look_around :-
+        i_am_at(Place),
+        path(Place, Direction, Somewhere),
+        is_discovered(Somewhere),
+        write(Direction), write(' -> '), write(Somewhere),
+        fail, nl.
+
+look_around.
 
 /* These rules set up a loop to mention all the objects
    in your vicinity. */
@@ -133,4 +157,5 @@ start :-
    circumstances, a room may have more than one description. */
 
 describe(someplace) :- write('You are someplace.'), nl.
+describe(jungle) :- write('You are in the jungle.'), nl.
 
