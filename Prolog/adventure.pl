@@ -3,12 +3,93 @@
 
 /* Facts about the world */
 
-i_am_at(someplace).
+path(meadow1, e, forest1).
+path(forest1, w, meadow1).
+path(forest1, e, dark_jungle1).
+path(dark_jungle1, w, forest1).
+path(dark_jungle1, e, tunnel_entrance).
+path(tunnel_entrance, w, dark_jungle1).
+path(meadow1, s, forest2).
+path(forest2, n, meadow1).
+path(forest1, s, meadow2).
+path(meadow2, n, forest1).
+path(dark_jungle1, s, jungle1).
+path(jungle1, n, dark_jungle1).
+path(tunnel_entrance, s, tunnel1).
+path(tunnel1, n, tunnel_entrance).
+path(ancient_ruins, s, tunnel2).
+path(tunnel2, n, ancient_ruins).
+path(volcano_peak, s, mountain_path1).
+path(mountain_path1, n, volcano_peak).
+path(forest2, e, meadow2).
+path(meadow2, w, forest2).
+path(meadow2, e, jungle1).
+path(jungle1, w, meadow2).
+path(tunnel1, e, tunnel2).
+path(tunnel2, w, tunnel1).
+path(forest2, s, fields1).
+path(fields1, n, forest2).
+path(jungle1, s, jungle2).
+path(jungle2, n, jungle1).
+path(tunnel2, s, cave).
+path(cave, s, tunnel2).
+path(mountain_path1, s, mountain_path2).
+path(mountain_path2, n, mountain_path1).
+path(jungle2, e, dark_jungle2).
+path(dark_jungle2, w, jungle2).
+path(fields1, s, beach1).
+path(beach1, n, fields1).
+path(plane_wreck, s, fields2).
+path(fields2, n, plane_wreck).
+path(jungle2, s, crossroads).
+path(crossroads, n, jungle2).
+path(dark_jungle2, s, path1).
+path(path1, n, dark_jungle2).
+path(mountain_path2, s, path2).
+path(path2, n, mountain_path2).
+path(ocean1, e, beach1).
+path(beach1, w, ocean1).
+path(beach1, e, fields2).
+path(fields2, w, beach1).
+path(fields2, e, crossroads).
+path(crossroads, w, fields2).
+path(crossroads, e, path1).
+path(path1, w, crossroads).
+path(path1, e, path3).
+path(path3, w, path1).
+path(path3, e, path2).
+path(path2, w, path3).
+path(beach1, s, beach2).
+path(beach2, n, beach1).
+path(crossroads, s, village1).
+path(village1, n, crossroads).
+path(path1, s, well_square).
+path(well_square, n, path1).
+path(path3, s, village2).
+path(village2, n, path3).
+path(ocean2, e, beach2).
+path(beach2, w, ocean2).
+path(house1, e, village1).
+path(village1, w, house1).
+path(village1, e, well_square).
+path(well_square, w, village1).
+path(well_square, e, village2).
+path(village2, w, well_square).
+path(beach2, s, beach3).
+path(beach3, n, beach2).
+path(house1, s, pantry).
+path(pantry, n, house1).
+path(village1, s, house2).
+path(house2, n, village1).
+path(well_square, s, old_house).
+path(old_house, n, well_square).
+path(ocean3, e, beach3).
+path(beach3, w, ocean3).
+path(old_house, e, basement).
+path(basement, w, old_house).
 
-path(someplace, n, jungle).
-path(jungle, s, someplace).
-path(someplace, e, beach).
-path(beach, w, someplace).
+i_am_at(fields2).
+
 
 at(thing, someplace).
 at(map, someplace).
@@ -318,9 +399,46 @@ start :-
 
 /* These rules describe the various locations */
 
-describe(someplace) :- write('You are someplace.'), nl.
-describe(jungle) :- write('You are in the jungle.'), nl.
-describe(beach) :- write('You are on the beach.'), nl.
+describe(jungle1) :- write('You are in the jungle.'), nl.
+describe(jungle2) :- write('You are in the jungle.'), nl.
+describe(dark_jungle1) :- write('You entered the very dense jungle.'), nl.
+describe(dark_jungle2) :- write('You entered the very dense jungle.'), nl.
+describe(beach1) :- write('You are on the beach.'), nl.
+describe(beach2) :- write('You are on the beach.'), nl.
+describe(beach3) :- write('You are on the beach.'), nl.
+describe(meadow1) :- write('You are in a meadow with a huge wooden totem in the middle.'), nl.
+describe(meadow2) :- write('You see a pond in the middle of a flower meadow.'), nl.
+describe(forest1) :- write('You are in the forest.'), nl.
+describe(forest2) :- write('You are in the forest.'), nl.
+describe(fields2) :- write('You are in the fields. You see fallen trees, scorched earth, and a plane wreck to the north.'), nl.
+describe(fields1) :- write('You are in the fields.'), nl.
+describe(plane_wreck) :- write('You entered the plane wreck. Certainly, more than one person flew on it, unfortunately you do not see anyone.'), nl.
+describe(tunnel_entrance) :- write('You entered a dark tunnel.'), nl.
+describe(tunnel1) :- write('You are in a long rock corridor. You don''t see much.'), nl.
+describe(tunnel2) :- write('You reached a fork. The walls of the tunnel have a strange color...'), nl.
+describe(ancient_ruins) :- write('You are in a stone crypt. You can see strange signs on the walls, and in the middle - a rock statue of a knight.'), nl.
+describe(volcano_peak) :- write('You reached the top. But it is not the top of the mountain. This is the top of the volcano!'), nl.
+describe(mountain_path1) :- write('You are getting closer to the top of the mountain. It''s getting hot...'), nl.
+describe(mountain_path2) :- write('You start climbing the mountain path.'), nl.
+describe(cave) :- write('You have entered a dark cave. You are clearly not alone here ...'), nl.
+describe(ocean1) :- write('You are at the ocean. You see another island in the distance ...'), nl.
+describe(ocean2) :- write('You are at the ocean. You see another island in the distance ...'), nl.
+describe(ocean3) :- write('You are at the ocean. You see another island in the distance ...'), nl.
+describe(beach1) :- write('You are on a sandy beach.'), nl.
+describe(beach2) :- write('You are on a sandy beach.'), nl.
+describe(beach3) :- write('You are on a sandy beach.'), nl.
+describe(house1) :- write('You entered an inhabited house.'), nl.
+describe(house2) :- write('You entered a wooden hut. Probably a weaver house.'), nl.
+describe(path1) :- write('You are on the path. You don''t know where it leads yet.'), nl.
+describe(path2) :- write('You are on the path. It starts to turn north and seems to lead to the top of the mountain.'), nl.
+describe(path3) :- write('You are on the path. You don''t know where it leads yet.'), nl.
+describe(village1) :- write('You are in the village.'), nl.
+describe(village2) :- write('You are in the village.'), nl.
+describe(old_house) :- write('You entered the old house. It is probably a forge.'), nl.
+describe(well_square) :- write('You are in the main part of the village.'), nl.
+describe(crossroads) :- write('You are at a crossroads. Fortunately, someone put up a signpost here.'), nl.
+describe(pantry) :- write('You entered the pantry. Many shelves are empty.'), nl.
+describe(basement) :- write('You entered the dark basement.'), nl.
 
 /* These rules describe the various objects */
 
