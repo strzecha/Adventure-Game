@@ -536,11 +536,38 @@ describe(basement) :- write('You entered the dark basement.'), nl.
 /* These rules describe the various objects */
 
 describe(phone) :- write('Works, but no signal.'), nl.
-describe(ax) :- write('Perfect for cutting trees.'), nl.
+describe(ax) :- write('Old, but perfect for cutting trees.'), nl.
+describe(pickax) :- write('Slightly rusty, but still fit for work.'), nl.
+describe(map) :- write('Thanks to the map, you can discover and remember new areas on the island.'), nl.
+describe(flaming_torch) :- write('The light of this torch can light up the darkness.'), nl.
+describe(signpost) :- write('North - trees, East - hot mountaint, South - people, West - a lot of water'), nl.
+describe(rose) :- write('It''s beautiful flower.'), nl.
+describe(dandelion) :- write('Common flower.'), nl.
+describe(well) :- write('The winch works, but the bucket is missing.'), nl.
 
 /* These rules describe the various NPCs */
 
+describe(ancient_guard) :- write('The statue shows a knight in full armor. However, his hands are empty...'), nl.
+describe(monkey) :- write('It''s definitely a bad monkey. Why?'), nl. 
+
 /* These rules describe the dialogs with NPCs */
 
-speak(native) :- write('Do you want an ax? I will give it to you, if you have something glowing.').
-
+speak(native) :- write('Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island.'),
+                write('I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful.'),
+                write('You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea.'),
+                write('Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map.'), 
+                write('Maybe it will be useful to you. I can also exchange my ax for some interesting item.'), nl.
+speak(old_native) :- write('Hello friend. I am m''Ilio.'), 
+                write(' I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders.'),
+                write('I would like to leave this cave, but I am afraid of the reaction of the other inhabitants.'),
+                write('However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time.'),
+                write('I am also very hungry. My son brings me food sometimes, but it''s usually fruit or nuts. I want meat.'),
+                write('Bring them to me and I will reward you.'), nl.
+speak(monkey) :- write('U-u-aaaa! Buaaaaa!'), nl.
+speak(ancient_guard) :- write('Hello traveler. I used to be a ruthless knight but was cursed by the village shaman.'),
+                        write('Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior".'),
+                        write('I do not know what it means. Help me please and I will reward you generously.'), nl.
+speak(blacksmith) :- write('Hello traveler. I am a local blacksmith.'),
+                write('I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources.'),
+                write('I heard that there are still deposits of iron left in the cave in the north of the island.'),
+                write('If you give me a fish, I will give you my pickaxe so that you can mine the ore.'), nl.
