@@ -11,6 +11,7 @@ path(someplace, e, beach).
 path(beach, w, someplace).
 
 at(thing, someplace).
+at(map, someplace).
 at(tree, someplace).
 at(flaming_torch, someplace).
 
@@ -22,6 +23,7 @@ is_dark(jungle).
 
 is_pickable(thing).
 is_pickable(flaming_torch).
+is_pickable(map).
 
 holding(notebook).
 holding(phone).
@@ -206,7 +208,10 @@ discover(Location) :-
         is_discovered(Location), !.
 
 discover(Location) :-
-        assert(is_discovered(Location)).
+        holding(map),
+        assert(is_discovered(Location)), !.
+
+discover(_).
 
 
 /* This rule set up a loop to mention all the objects in location */
