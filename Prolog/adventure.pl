@@ -88,25 +88,79 @@ path(beach3, w, ocean3).
 path(old_house, e, basement).
 path(basement, w, old_house).
 
+is_dark(tunnel_entrance).
+is_dark(tunnel1).
+is_dark(tunnel2).
+is_dark(ancient_ruins).
+is_dark(cave).
+is_dark(dark_jungle1).
+is_dark(dark_jungle2).
+is_dark(basement).
+is_dark(pantry).
+
+at(totem, meadow1).
+at(tree, forest1).
+at(tree, forest1).
+at(stick, forest1).
+at(banana_tree, dark_jungle1).
+at(lava_source, volcano_peak).
+at(tree, forest2).
+at(tree, forest2).
+at(pond, meadow2).
+at(rose, meadow2).
+at(dandelion, meadow2).
+at(bush, jungle1).
+at(tree, jungle1).
+at(note3, tunnel1).
+at(iron_ore, tunnel2).
+at(note2, mountain_path1).
+at(note4, fields1).
+at(notebook, plane_wreck).
+at(bush, jungle2).
+at(bush, dark_jungle2).
+at(stick, dark_jungle2).
+at(palm, beach1).
+at(signpost, crossroads).
+at(stone, path2).
+at(palm, beach2).
+at(palm, beach2).
+at(stick, beach2).
+at(note1, village1).
+at(well, well_square).
+at(string, village2).
+at(note5, ocean3).
+at(palm, beach3).
+at(meat, pantry).
+at(cloth, house2).
+at(sheets, house2).
+at(blast_furnace, old_house).
+at(anvil, basement).
+
+at(ancient_guard, ancient_ruins).
+at(blacksmith, old_house).
+at(monkey, jungle1).
+at(native, house1).
+at(old_native, cave).
+
+is_pickable(stick).
+is_pickable(rose).
+is_pickable(dandelion).
+is_pickable(note1).
+is_pickable(note2).
+is_pickable(note3).
+is_pickable(note4).
+is_pickable(note5).
+is_pickable(notebook).
+is_pickable(stone).
+is_pickable(string).
+is_pickable(meat).
+is_pickable(cloth).
+is_pickable(sheets).
+
 i_am_at(fields2).
-
-
-at(thing, someplace).
-at(map, someplace).
-at(tree, someplace).
-at(flaming_torch, someplace).
-
-at(native, jungle).
 
 exchange(native, phone, ax).
 
-is_dark(jungle).
-
-is_pickable(thing).
-is_pickable(flaming_torch).
-is_pickable(map).
-
-holding(notebook).
 holding(phone).
 
 is_reusable(ax).
