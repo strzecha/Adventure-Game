@@ -157,17 +157,54 @@ is_pickable(meat).
 is_pickable(cloth).
 is_pickable(sheets).
 
-i_am_at(fields2).
-
 exchange(native, phone, ax).
+exchange(monkey, banana, rope).
+exchange(native, rose, map).
+exchange(ancient_guard, sword, mysterious_stone).
+exchange(old_native, meat, banana).
+exchange(old_native, dandelion, bucket).
+exchange(blacksmith, fish, pickax).
+exchange(blacksmith, raw_iron, sword).
 
-holding(phone).
+usable(stone, banana_tree, banana).
+usable(ax, tree, wood).
+usable(ax, palm, mast).
+usable(ax, bush, brushwood).
+usable(sword, bush, brushwood).
+usable(brushwood, cloth, torch).
+usable(torch, lava_source, flaming_torch).
+usable(pickax, iron_ore, raw_iron).
+usable(stick, cloth, torch).
+usable(stick, string, fishing_rod).
+usable(raw_iron, blast_furnace, liquid_iron).
+usable(liquid_iron, stick, sword_form).
+usable(fishing_rod, pond, fish).
+usable(sword_form, anvil, hot_sword).
+usable(bucket, well, water_bucket).
+usable(bucket, pond, water_bucket).
+usable(hot_sword, water_bucket, sword).
+usable(hot_sword, pond, sword).
+usable(wood, wood, hardwood).
+usable(hardwood, rope, deck).
+usable(sheets, mast, sail).
+usable(sail, deck, raft).
+usable(torch, blast_furnace, flaming_torch).
+usable(mysterious_stone, totem, people).
 
 is_reusable(ax).
+is_reusable(sword).
+is_reusable(pickax).
+is_reusable(fishing_rod).
+is_reusable(pond).
+is_reusable(well).
+is_reusable(totem).
+is_reusable(banana_tree).
+is_reusable(lava_source).
+is_reusable(blast_furnace).
+is_reusable(anvil).
 
-usable(ax, tree, wood).
-
-is_discovered(someplace).
+holding(phone).
+i_am_at(fields2).
 
 /* These rules describe how to pick up an object */
 
@@ -218,6 +255,7 @@ use(Object1, Object2) :-
         use_up(Object1),
         use_up(Object2),
         assert(holding(Result)),
+        assert(is_pickable(Result)),
         write('You got '), write(Result),
         nl, !.
 
@@ -294,6 +332,7 @@ give(Object, NPC) :-
         holding(Object),
         retract(holding(Object)),
         assert(holding(Gift)),
+        assert(is_pickable(Gift)),
         write('You got '), write(Gift),
         nl, !.
 
