@@ -32,7 +32,7 @@ path(fields1, n, forest2).
 path(jungle1, s, jungle2).
 path(jungle2, n, jungle1).
 path(tunnel2, s, cave).
-path(cave, s, tunnel2).
+path(cave, n, tunnel2).
 path(mountain_path1, s, mountain_path2).
 path(mountain_path2, n, mountain_path1).
 path(jungle2, e, dark_jungle2).
@@ -251,7 +251,7 @@ available(Object) :-
 use(Object1, Object2) :-
         available(Object1),
         available(Object2),
-        usable(Object1, Object2, Result),
+        (usable(Object1, Object2, Result); usable(Object2, Object1, Result)),
         use_up(Object1),
         use_up(Object2),
         assert(holding(Result)),
@@ -539,9 +539,6 @@ describe(jungle1) :- write('You are in the jungle.'), nl.
 describe(jungle2) :- write('You are in the jungle.'), nl.
 describe(dark_jungle1) :- write('You entered the very dense jungle.'), nl.
 describe(dark_jungle2) :- write('You entered the very dense jungle.'), nl.
-describe(beach1) :- write('You are on the beach.'), nl.
-describe(beach2) :- write('You are on the beach.'), nl.
-describe(beach3) :- write('You are on the beach.'), nl.
 describe(meadow1) :- write('You are in a meadow with a huge wooden totem in the middle.'), nl.
 describe(meadow2) :- write('You see a pond in the middle of a flower meadow.'), nl.
 describe(forest1) :- write('You are in the forest.'), nl.
