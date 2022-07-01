@@ -387,6 +387,49 @@ discover(Location) :-
 
 discover(_).
 
+/* These rules tells how to leave the island */
+at_ocean :-
+        i_am_at(ocean1); i_am_at(ocean2); i_am_at(ocean3).
+
+has_notes :-
+        holding(note1),
+        holding(note2),
+        holding(note3),
+        holding(note4),
+        holding(note5),
+        holding(notebook).
+
+leave :-
+        at_ocean,
+        holding(raft),
+        has_notes,
+        holding(people),
+        write('You left the island. You rescued rest of the passengers and complete the history. You won!'), nl,
+        finish,
+        !.
+
+leave :-
+        at_ocean,
+        holding(raft),
+        has_notes,
+        write('You left the island. You complete the history, but didn''t find rest of the passengers.'), nl,
+        finish,
+        !.
+
+leave :-
+        at_ocean,
+        holding(raft),
+        write('You left the island, but dont''t know anuthing.'), nl,
+        finish,
+        !.
+
+leave :-
+        at_ocean,
+        write('You need something to '),
+        !.
+
+leave :-
+        write('You aren''t at the ocean.').
 
 /* This rule set up a loop to mention all the objects in location */
 
