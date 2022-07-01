@@ -129,6 +129,7 @@ at(note1, village1).
 at(well, well_square).
 at(string, village2).
 at(note5, ocean3).
+at(wreck, ocean3).
 at(palm, beach3).
 at(meat, pantry).
 at(cloth, house2).
@@ -333,6 +334,7 @@ give(Object, NPC) :-
         retract(holding(Object)),
         assert(holding(Gift)),
         assert(is_pickable(Gift)),
+        describe(Object, NPC),
         write('You got '), write(Gift),
         nl, !.
 
@@ -404,7 +406,7 @@ leave :-
         holding(raft),
         has_notes,
         holding(people),
-        write('You left the island. You rescued rest of the passengers and complete the history. You won!'), nl,
+        write('You left the island. You rescued rest of the passengers and complete the story. You won!'), nl,
         finish,
         !.
 
@@ -412,20 +414,28 @@ leave :-
         at_ocean,
         holding(raft),
         has_notes,
-        write('You left the island. You complete the history, but didn''t find rest of the passengers.'), nl,
+        write('You left the island. You found the rest of the passengers, but didn''t know their full story.'), nl,
         finish,
         !.
 
 leave :-
         at_ocean,
         holding(raft),
-        write('You left the island, but dont''t know anuthing.'), nl,
+        holding(people),
+        write('You left the island. You complete the story, but didn''t find rest of the passengers.'), nl,
         finish,
         !.
 
 leave :-
         at_ocean,
-        write('You need something to '),
+        holding(raft),
+        write('You left the island, but dont''t know anything.'), nl,
+        finish,
+        !.
+
+leave :-
+        at_ocean,
+        write('You can''t swim across the ocean. You need boat.'), nl,
         !.
 
 leave :-
@@ -584,30 +594,64 @@ describe(signpost) :- write('North - trees, East - hot mountaint, South - people
 describe(rose) :- write('It''s beautiful flower.'), nl.
 describe(dandelion) :- write('Common flower.'), nl.
 describe(well) :- write('The winch works, but the bucket is missing.'), nl.
+describe(brushwood) :- write('A bunch of dry branches.'), nl.
+describe(cloth) :- write('It seems to be flammable.'), nl.
+describe(wreck) :- write('A very primitive boat made up of several logs and lianas. But it looks like it was burnt?'), nl.
+describe(notebook) :- write('This looks like the diary of one of the passengers. The handwriting is very blurry.'), nl,
+                        write('"We have a damaged engine, the pilot says we have to make an emergency landing on (unreadable)."'), nl, nl,
+                        write('"We crashed, only three of us survived. Our little group of survivors will try to find rescue.'),
+                        write(' We tried to find all (unreadable), but we may have missed someone. So I leave this (unreadable).'),
+                        write(' If you read this - find us. We''re going (unreadable)."'), nl, nl,
+                        write('The next pages are torn out.'), nl.
+describe(note1) :- write('"We got to the village. The people are primitive, but they understand our language very well.'),
+                        write(' He told us to go to the "hot mountain". Perhaps we will be able to call for help from on high."'), nl.
+describe(note2) :- write('"We reached the top of the "hot mountain", which turned out to be an active volcano.'),
+                        write(' We tried sending smoke signs but unfortunately it didn''t help. We are now going to the cave at the foot of the volcano.'),
+                        write(' Apparently a wise man lives there, and besides (unreadable)"'), nl.
+describe(note3) :- write('"We talked to the old native in the cave. He instructed us to go to a nearby island.'),
+                        write(' He is said to be more civilized than this one. We saw her from the top of the volcano.'),
+                        write(' We just need to build a ship. We go west, where there is the best access to the ocean."'), nl.
+describe(note4) :- write('"We cut down some trees. One of them was really big. It grew next to a primitive totem in the north of the island.'),
+                        write(' The natives mentioned something as a special tree, but we didn''t care.'),
+                        write(' We are going to the ocean now to sail to another island."'), nl.
+describe(note5) :- write('"We built a boat, we''re le"'), nl, write('The note ends in half a sentence.'), nl.
 
 /* These rules describe the various NPCs */
 
 describe(ancient_guard) :- write('The statue shows a knight in full armor. However, his hands are empty...'), nl.
-describe(monkey) :- write('It''s definitely a bad monkey. Why?'), nl. 
+describe(monkey) :- write('It''s definitely a bad monkey. Why? Interestingly, instead of on the liana, the monkey hangs on a fairly solid rope.'), nl. 
+
+/* These rules describe the vaiours exchanges */
+describe(phone, native) :- write('Whoa! Shiny! Interesting. Take my ax.'), nl.
+describe(rose, native) :- write('Beautiful! Great idea! Thank you. Take this map. Thanks to it you will not get lost.'), nl.
+describe(banana, monkey) :- write('This monkey was obviously just hungry. Monkey took the fruit and walked away.'),
+                                write(' You can safely take the rope it was hanging on.'), nl.
+describe(dandelion, old_native) :- write('Thank you friend. An ordinary flower, and so pleasing to the eye.'),
+                                write(' It''s not much, but that''s all I can give you.'), nl.
+describe(meat, old_native) :- write('Delicious! Thank you! In return, I can give you this fruit that they keep feeding me.'), nl.
+describe(sword, ancient_guard) :- write('Yes! Now I feel like I can go in peace! So that''s what I missed!'),
+                                write(' Thank you! Please take this stone. The ghosts told me to keep an eye on him. Goodbye...'), nl.
 
 /* These rules describe the dialogs with NPCs */
 
 speak(native) :- write('Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island.'),
-                write('I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful.'),
-                write('You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea.'),
-                write('Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map.'), 
-                write('Maybe it will be useful to you. I can also exchange my ax for some interesting item.'), nl.
+                write(' I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful.'),
+                write(' You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea.'),
+                write(' Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map.'), 
+                write(' Maybe it will be useful to you. I can also exchange my ax for some interesting item.'), nl.
 speak(old_native) :- write('Hello friend. I am m''Ilio.'), 
                 write(' I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders.'),
-                write('I would like to leave this cave, but I am afraid of the reaction of the other inhabitants.'),
-                write('However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time.'),
-                write('I am also very hungry. My son brings me food sometimes, but it''s usually fruit or nuts. I want meat.'),
-                write('Bring them to me and I will reward you.'), nl.
+                write(' I would like to leave this cave, but I am afraid of the reaction of the other inhabitants.'),
+                write(' However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time.'),
+                write(' I am also very hungry. My son brings me food sometimes, but it''s usually fruit or nuts. I want meat.'),
+                write(' Bring them to me and I will reward you.'), nl.
 speak(monkey) :- write('U-u-aaaa! Buaaaaa!'), nl.
 speak(ancient_guard) :- write('Hello traveler. I used to be a ruthless knight but was cursed by the village shaman.'),
-                        write('Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior".'),
-                        write('I do not know what it means. Help me please and I will reward you generously.'), nl.
+                        write(' Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior".'),
+                        write(' I do not know what it means. Help me please and I will reward you generously.'), nl.
 speak(blacksmith) :- write('Hello traveler. I am a local blacksmith.'),
-                write('I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources.'),
-                write('I heard that there are still deposits of iron left in the cave in the north of the island.'),
-                write('If you give me a fish, I will give you my pickaxe so that you can mine the ore.'), nl.
+                write(' I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources.'),
+                write(' I heard that there are still deposits of iron left in the cave in the north of the island.'),
+                write(' If you give me a fish, I will give you my pickaxe so that you can mine the ore.'), nl.
+speak(people) :- write('Thank God you''re here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out.'),
+                write(' Lightning struck all around us, and finally one hit our boat and sent us to nothingness. You save our lives.'), nl.
