@@ -15,6 +15,7 @@ data Location = Location
     ,   south           :: Maybe Location
     ,   east            :: Maybe Location
     ,   locationItems   :: [Item]
+    ,   locationNPCs    :: [NPC]
     } deriving (Eq, Show)
 
 data Item = Item
@@ -29,7 +30,16 @@ data Recipe = Recipe
         recipeItem1     :: Item
     ,   recipeItem2     :: Item
     ,   recipeProduct   :: Item
-    }
+    } deriving (Eq, Show)
+
+data NPC = NPC
+    {
+        npcName         :: String
+    ,   npcSpeech       :: String
+    ,   npcDescription  :: String
+    ,   npcItem         :: Item
+    ,   npcNeed         :: Item
+    } deriving (Eq, Show)
 
 newLocation :: Location
 newLocation = Location{
@@ -39,7 +49,8 @@ newLocation = Location{
     west = Nothing,
     south = Nothing,
     east = Nothing,
-    locationItems =[]
+    locationItems = [],
+    locationNPCs = []
 }
 
 newItem :: Item
@@ -54,6 +65,15 @@ newRecipe = Recipe{
     recipeItem1 = blankItem,
     recipeItem2 = blankItem,
     recipeProduct = blankItem
+}
+
+newNPC :: NPC
+newNPC = NPC{
+    npcName = "",
+    npcSpeech = "",
+    npcDescription = "",
+    npcItem = blankItem,
+    npcNeed = blankItem
 }
 
 
@@ -82,7 +102,7 @@ printInstructions = printLines instructionsText
 -- locations
 someplace = newLocation{locationName="Someplace", locationDescription="Desc Someplace",
                         north=(Just beach2), west=(Just jungle2), south=(Just jungle3), east=(Just jungle1),
-                        locationItems=[pen, sign, thing]}
+                        locationItems=[pen, sign, thing], locationNPCs=[native]}
 jungle1 = newLocation{locationName="Jungle1", locationDescription="Desc Jungle",
                     west=(Just someplace)}
 jungle2 = newLocation{locationName="Jungle2", locationDescription="Desc Jungle",
@@ -104,23 +124,31 @@ blankItem = newItem
 recipeBanana = newRecipe{recipeItem1=phone, recipeItem2=pen, recipeProduct=thing}
 recipeSign = newRecipe{recipeItem1=pen, recipeItem2=thing, recipeProduct=sign}
 
+-- NPCs
+native = newNPC{npcName="native", npcDescription="nat", npcSpeech="Hello", npcItem=thing, npcNeed=phone}
+
 -- describing
 join :: [Item] -> String
-join [] = "nothing"
+join [] = ""
 join [item] = itemName item
 join (item:items) = (itemName item) ++ ", " ++ (join items)
+
+joinNPC :: [NPC] -> String
+joinNPC [] = ""
+joinNPC [npc] = npcName npc
+joinNPC (npc:npcs) = (npcName npc) ++ ", " ++ (joinNPC npcs)
 
 printMessage :: String -> GameState -> GameState
 printMessage msg state = state{output=msg}
 
 describeSituation :: GameState -> IO ()
 describeSituation state = printLines [(locationName (currentLocation state)), (output state), "",
-                                      (descItems), ""]
+                                      (desc), ""]
     where
-        descItems = descriptionItems (locationItems (currentLocation state))
+        desc = description (locationItems (currentLocation state)) (locationNPCs (currentLocation state))
 
-descriptionItems :: [Item] -> String
-descriptionItems items = "You see: " ++ (join items)
+description :: [Item] -> [NPC] -> String
+description items npcs = "There are: " ++ (join items) ++ ", " ++ (joinNPC npcs)
 
 showInventory :: GameState -> GameState
 showInventory state = printMessage (descItems) state
@@ -155,6 +183,57 @@ move direction state = go (nextLoc) state
         go location = case location of
             Nothing -> printMessage "You can't go that way"
             Just location -> moveTo location
+
+npcInList :: String -> [NPC] -> Maybe NPC
+npcInList npName [] = Nothing
+npcInList npName (npc:npcs) = do
+    if npName == name then
+        Just npc
+    else 
+        npcInList npName npcs
+    where
+        name = (npcName npc)
+
+talk :: String -> GameState -> GameState
+talk npcName state = printMessage (message npc) state
+    where
+        npc = npcInList npcName (locationNPCs (currentLocation state))
+        message npc = 
+            case npc of
+                Just npc -> npcSpeech npc
+                Nothing -> "There is no " ++ npcName
+
+examineNPC :: String -> GameState -> GameState
+examineNPC npcName state = printMessage (message npc) state
+    where
+        npc = npcInList npcName (locationNPCs (currentLocation state))
+        message npc = 
+            case npc of
+                Just npc -> npcDescription npc
+                Nothing -> "There is no " ++ npcName
+
+give :: String -> String -> GameState -> GameState
+give itName npName state = exchange item npc state
+    where
+        npc = npcInList npName (locationNPCs (currentLocation state))
+        item = itemInList itName (playerItems state)
+
+        exchange :: Maybe Item -> Maybe NPC -> GameState -> GameState
+        exchange item npc state = 
+            case item of
+                Nothing -> printMessage ("You don't have "++itName) state
+                Just item -> 
+                    case npc of
+                        Nothing -> printMessage ("There is no "++npName) state
+                        Just npc -> 
+                            if item == (npcNeed npc) then
+                                state{output="You got "++(itemName (npcItem npc)), playerItems=gift:inventory}
+                            else
+                                printMessage "He don't want it" state
+
+                                where
+                                    inventory = playerItems state 
+                                    gift = npcItem npc
 
 -- interact with items
 examine :: String -> GameState -> GameState
@@ -275,6 +354,9 @@ parseCommand input =
         "use" -> use ((words input)!!1) ((words input)!!2)
         "inventory" -> showInventory 
         "pick" -> pickUp ((words input)!!1)
+        "talk" -> talk ((words input)!!1)
+        "examineNPC" -> examineNPC ((words input)!!1)
+        "give" -> give ((words input)!!1) ((words input)!!2)
         "quit" -> quit
         otherwise -> (\state -> state{output="Unrecognized command"})
 
