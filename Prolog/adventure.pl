@@ -615,6 +615,8 @@ describe(note4) :- write('"We cut down some trees. One of them was really big. I
                         write(' The natives mentioned something as a special tree, but we didn''t care.'),
                         write(' We are going to the ocean now to sail to another island."'), nl.
 describe(note5) :- write('"We built a boat, we''re le"'), nl, write('The note ends in half a sentence.'), nl.
+examine(people) :- write('Thank God you''re here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out.'),
+                write(' Lightning struck all around us, and finally one hit our boat and sent us to nothingness. You save our lives.'), nl.
 
 /* These rules describe the various NPCs */
 
@@ -653,5 +655,3 @@ speak(blacksmith) :- write('Hello traveler. I am a local blacksmith.'),
                 write(' I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources.'),
                 write(' I heard that there are still deposits of iron left in the cave in the north of the island.'),
                 write(' If you give me a fish, I will give you my pickaxe so that you can mine the ore.'), nl.
-speak(people) :- write('Thank God you''re here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out.'),
-                write(' Lightning struck all around us, and finally one hit our boat and sent us to nothingness. You save our lives.'), nl.
