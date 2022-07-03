@@ -4,11 +4,13 @@ data GameState = GameState
     , output            :: String
     , playerItems       :: [Item]
     , recipes           :: [Recipe]
+    , locationsDiscovered :: [Integer]
     }
 
 data Location = Location
     {
-        locationName    :: String
+        locationID      :: Integer
+    ,   locationName    :: String
     ,   locationDescription     :: String
     ,   north           :: Maybe Location
     ,   west            :: Maybe Location
@@ -43,6 +45,7 @@ data NPC = NPC
 
 newLocation :: Location
 newLocation = Location{
+    locationID = -1,
     locationName = "",
     locationDescription = "",
     north = Nothing,
@@ -100,16 +103,16 @@ printIntroduction = printLines introductionText
 printInstructions = printLines instructionsText
 
 -- locations
-someplace = newLocation{locationName="Someplace", locationDescription="Desc Someplace",
+someplace = newLocation{locationID=0, locationName="Someplace", locationDescription="Desc Someplace",
                         north=(Just beach2), west=(Just jungle2), south=(Just jungle3), east=(Just jungle1),
                         locationItems=[pen, sign, thing], locationNPCs=[native]}
-jungle1 = newLocation{locationName="Jungle1", locationDescription="Desc Jungle",
+jungle1 = newLocation{locationID=1, locationName="Jungle1", locationDescription="Desc Jungle",
                     west=(Just someplace)}
-jungle2 = newLocation{locationName="Jungle2", locationDescription="Desc Jungle",
+jungle2 = newLocation{locationID=2, locationName="Jungle2", locationDescription="Desc Jungle",
                     east=(Just someplace)}
-jungle3 = newLocation{locationName="Jungle3", locationDescription="Desc Jungle",
+jungle3 = newLocation{locationID=3, locationName="Jungle3", locationDescription="Desc Jungle",
                       north=(Just someplace)}
-beach2 = newLocation{locationName="Beach2", locationDescription="Desc beach",
+beach2 = newLocation{locationID=4, locationName="Beach2", locationDescription="Desc beach",
                      south=(Just someplace)}
 
 -- items
@@ -173,7 +176,12 @@ canMove location direction = do
         Just location -> return True
 
 moveTo :: Location -> GameState -> GameState
-moveTo location state = state{currentLocation=location, output=""}
+moveTo location state = state{currentLocation=location, output="",
+                            locationsDiscovered=id:locationsID}
+    where
+        id = locationID location
+        locationsID = locationsDiscovered state
+
 
 move :: String -> GameState -> GameState
 move direction state = go (nextLoc) state
@@ -183,6 +191,39 @@ move direction state = go (nextLoc) state
         go location = case location of
             Nothing -> printMessage "You can't go that way"
             Just location -> moveTo location
+
+getNameLocation :: Location -> GameState -> String
+getNameLocation location state | not (elem id (locationsDiscovered state)) = "undiscovered"
+                               | otherwise = locationName location
+    where
+        id = locationID location
+
+lookAround :: GameState -> GameState
+lookAround state = state{output=desc}
+    where
+        nLoc = north (currentLocation state)
+        eLoc = east (currentLocation state)
+        sLoc = south (currentLocation state)
+        wLoc = west (currentLocation state)
+        descN =
+            case nLoc of
+                Nothing -> ""
+                Just nLoc -> "s -> " ++ (getNameLocation nLoc state) ++ "\n"
+        descE =
+            case eLoc of
+                Nothing -> ""
+                Just eLoc -> "e -> " ++ (getNameLocation eLoc state) ++ "\n"
+        descS =
+            case sLoc of
+                Nothing -> ""
+                Just sLoc -> "s -> " ++ (getNameLocation sLoc state) ++ "\n"
+        descW =
+            case wLoc of
+                Nothing -> ""
+                Just wLoc -> "w -> " ++ (getNameLocation wLoc state) ++ "\n"
+        
+        desc = descN ++ descE ++ descS ++ descW
+
 
 npcInList :: String -> [NPC] -> Maybe NPC
 npcInList npName [] = Nothing
@@ -357,6 +398,7 @@ parseCommand input =
         "talk" -> talk ((words input)!!1)
         "examineNPC" -> examineNPC ((words input)!!1)
         "give" -> give ((words input)!!1) ((words input)!!2)
+        "look_around" -> lookAround
         "quit" -> quit
         otherwise -> (\state -> state{output="Unrecognized command"})
 
@@ -367,7 +409,7 @@ gameLoop = do
     return ()
     where
         startingState = do
-            return (GameState someplace False "" [phone, pen] [recipeBanana, recipeSign])
+            return (GameState someplace False "" [phone, pen] [recipeBanana, recipeSign] [0])
         play state = do
             newState <- playFrame state
             if gameOver newState then
