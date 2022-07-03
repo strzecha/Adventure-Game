@@ -18,6 +18,7 @@ data Location = Location
     ,   east            :: Maybe Location
     ,   locationItems   :: [Item]
     ,   locationNPCs    :: [NPC]
+    ,   locationDark    :: Bool
     } deriving (Eq, Show)
 
 data Item = Item
@@ -53,7 +54,8 @@ newLocation = Location{
     south = Nothing,
     east = Nothing,
     locationItems = [],
-    locationNPCs = []
+    locationNPCs = [],
+    locationDark = False
 }
 
 newItem :: Item
@@ -105,7 +107,7 @@ printInstructions = printLines instructionsText
 -- locations
 someplace = newLocation{locationID=0, locationName="Someplace", locationDescription="Desc Someplace",
                         north=(Just beach2), west=(Just jungle2), south=(Just jungle3), east=(Just jungle1),
-                        locationItems=[pen, sign, thing], locationNPCs=[native]}
+                        locationItems=[pen, sign, thing, flaming_torch], locationNPCs=[native]}
 jungle1 = newLocation{locationID=1, locationName="Jungle1", locationDescription="Desc Jungle",
                     west=(Just someplace)}
 jungle2 = newLocation{locationID=2, locationName="Jungle2", locationDescription="Desc Jungle",
@@ -113,13 +115,16 @@ jungle2 = newLocation{locationID=2, locationName="Jungle2", locationDescription=
 jungle3 = newLocation{locationID=3, locationName="Jungle3", locationDescription="Desc Jungle",
                       north=(Just someplace)}
 beach2 = newLocation{locationID=4, locationName="Beach2", locationDescription="Desc beach",
-                     south=(Just someplace)}
+                     south=(Just someplace), locationDark=True}
 
 -- items
 phone = newItem{itemName="phone", itemDescription="Glowing", itemPickable=True}
 pen = newItem{itemName="pen", itemDescription="Shiny", itemPickable=True}
 thing = newItem{itemName="thing", itemDescription="Strange", itemPickable=True}
 sign = newItem{itemName="sign", itemDescription="W - left, E - right"}
+
+flaming_torch = newItem{itemName="flaming_torch", itemPickable=True}
+
 
 blankItem = newItem
 
@@ -145,10 +150,22 @@ printMessage :: String -> GameState -> GameState
 printMessage msg state = state{output=msg}
 
 describeSituation :: GameState -> IO ()
-describeSituation state = printLines [(locationName (currentLocation state)), (output state), "",
+describeSituation state = printLines [locationName location, (output state), "",
                                       (desc), ""]
     where
-        desc = description (locationItems (currentLocation state)) (locationNPCs (currentLocation state))
+        location = currentLocation state
+        desc = 
+            if isVisible location (playerItems state) then
+                description (locationItems (currentLocation state)) (locationNPCs (currentLocation state))
+            else 
+                "You see darkness only"     
+
+isVisible :: Location -> [Item] -> Bool
+isVisible location inventory = 
+    if locationDark location && not (elem flaming_torch inventory) then
+        False
+    else
+        True
 
 description :: [Item] -> [NPC] -> String
 description items npcs = "There are: " ++ (join items) ++ ", " ++ (joinNPC npcs)
