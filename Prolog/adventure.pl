@@ -262,6 +262,12 @@ use(Object1, Object2) :-
 
 use(Object1, Object2) :-
         available(Object1),
+        available(Object2),
+        write('You can''t use it that way.'),
+        nl, !.
+
+use(Object1, Object2) :-
+        available(Object1),
         write('You don''t have '), write(Object2), 
         nl, !.
 
@@ -525,12 +531,13 @@ instructions :-
         write('n.  s.  e.  w.           -- to go in that direction.'), nl,
         write('take(Object).            -- to pick up an object.'), nl,
         write('drop(Object).            -- to put down an object.'), nl,
+        write('examine(Object).         -- to examine an object.'), nl,
         write('use(Object, Object).     -- to use the objects together.'), nl,
         write('inventory.               -- to see the objects you are holding.'), nl,
         write('look.                    -- to inspect current locations.'), nl,
         write('look_around.             -- to see where you can go.'), nl,
         write('talk(NPC).               -- to talk with NPC.'), nl,
-        write('give(Object, NPC).       -- to give an object to NPC'), nl,
+        write('give(Object, NPC).       -- to give an object to NPC.'), nl,
         write('instructions.            -- to see this message again.'), nl,
         write('halt.                    -- to end the game and quit.'), nl,
         nl.
@@ -615,7 +622,7 @@ describe(note4) :- write('"We cut down some trees. One of them was really big. I
                         write(' The natives mentioned something as a special tree, but we didn''t care.'),
                         write(' We are going to the ocean now to sail to another island."'), nl.
 describe(note5) :- write('"We built a boat, we''re le"'), nl, write('The note ends in half a sentence.'), nl.
-examine(people) :- write('Thank God you''re here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out.'),
+describe(people) :- write('Thank God you''re here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out.'),
                 write(' Lightning struck all around us, and finally one hit our boat and sent us to nothingness. You save our lives.'), nl.
 
 /* These rules describe the various NPCs */
