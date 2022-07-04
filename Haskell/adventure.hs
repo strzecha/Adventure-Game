@@ -35,13 +35,19 @@ data Recipe = Recipe
     ,   recipeProduct   :: Item
     } deriving (Eq, Show)
 
+data Exchange = Exchange
+    {
+        neededItem          :: Item
+    ,   offeredItem         :: Item
+    ,   exchangeDescription :: String
+    } deriving (Eq, Show)
+
 data NPC = NPC
     {
         npcName         :: String
     ,   npcSpeech       :: String
     ,   npcDescription  :: String
-    ,   npcItem         :: Item
-    ,   npcNeed         :: Item
+    ,   npcExchanges    :: [Exchange]
     } deriving (Eq, Show)
 
 newLocation :: Location
@@ -77,8 +83,14 @@ newNPC = NPC{
     npcName = "",
     npcSpeech = "",
     npcDescription = "",
-    npcItem = blankItem,
-    npcNeed = blankItem
+    npcExchanges = []
+}
+
+newExchange :: Exchange
+newExchange = Exchange{
+    neededItem = blankItem,
+    offeredItem = blankItem,
+    exchangeDescription = ""
 }
 
 
@@ -132,8 +144,11 @@ blankItem = newItem
 recipeBanana = newRecipe{recipeItem1=phone, recipeItem2=pen, recipeProduct=thing}
 recipeSign = newRecipe{recipeItem1=pen, recipeItem2=thing, recipeProduct=sign}
 
+-- exchanges
+exchangeAx = newExchange{neededItem=phone, offeredItem=thing, exchangeDescription="Have my ax"}
+
 -- NPCs
-native = newNPC{npcName="native", npcDescription="nat", npcSpeech="Hello", npcItem=thing, npcNeed=phone}
+native = newNPC{npcName="native", npcDescription="nat", npcSpeech="Hello", npcExchanges=[exchangeAx]}
 
 -- describing
 join :: [Item] -> String
@@ -241,6 +256,13 @@ lookAround state = state{output=desc}
         
         desc = descN ++ descE ++ descS ++ descW
 
+exchangeInList :: Item -> [Exchange] -> Maybe Exchange
+exchangeInList item [] = Nothing
+exchangeInList item (exchange:exchanges) = do
+    if item == neededItem exchange then
+        Just exchange
+    else
+        exchangeInList item exchanges
 
 npcInList :: String -> [NPC] -> Maybe NPC
 npcInList npName [] = Nothing
@@ -271,27 +293,28 @@ examineNPC npcName state = printMessage (message npc) state
                 Nothing -> "There is no " ++ npcName
 
 give :: String -> String -> GameState -> GameState
-give itName npName state = exchange item npc state
+give itName npName state = tryExchange item npc state
     where
         npc = npcInList npName (locationNPCs (currentLocation state))
         item = itemInList itName (playerItems state)
 
-        exchange :: Maybe Item -> Maybe NPC -> GameState -> GameState
-        exchange item npc state = 
+        tryExchange :: Maybe Item -> Maybe NPC -> GameState -> GameState
+        tryExchange item npc state = 
             case item of
                 Nothing -> printMessage ("You don't have "++itName) state
                 Just item -> 
                     case npc of
                         Nothing -> printMessage ("There is no "++npName) state
-                        Just npc -> 
-                            if item == (npcNeed npc) then
-                                state{output="You got "++(itemName (npcItem npc)), playerItems=gift:inventory}
-                            else
-                                printMessage "He don't want it" state
+                        Just npc -> doExchange (exchangeInList item (npcExchanges npc)) state
 
-                                where
-                                    inventory = playerItems state 
-                                    gift = npcItem npc
+doExchange :: Maybe Exchange -> GameState -> GameState
+doExchange exchange state =
+    case exchange of
+        Nothing -> printMessage "He don't want it" state
+        Just exchange -> state{output="You got "++(itemName (offeredItem exchange)), playerItems=(offeredItem exchange):inventory}
+
+        where
+            inventory = playerItems state 
 
 -- interact with items
 examine :: String -> GameState -> GameState
