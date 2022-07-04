@@ -126,33 +126,89 @@ printIntroduction = printLines introductionText
 printInstructions = printLines instructionsText
 
 -- locations
-someplace = newLocation{locationID=0, locationName="Someplace", locationDescription="Desc Someplace",
-                        north=(Just beach2), west=(Just jungle2), south=(Just jungle3), east=(Just jungle1),
-                        locationItems=[pen, sign, thing, flaming_torch, aMap], locationNPCs=[native]}
-jungle1 = newLocation{locationID=1, locationName="Jungle1", locationDescription="Desc Jungle",
-                    west=(Just someplace)}
-jungle2 = newLocation{locationID=2, locationName="Jungle2", locationDescription="Desc Jungle",
-                    east=(Just someplace)}
-jungle3 = newLocation{locationID=3, locationName="Jungle3", locationDescription="Desc Jungle",
-                      north=(Just someplace)}
-beach2 = newLocation{locationID=4, locationName="Beach2", locationDescription="Desc beach",
-                     south=(Just someplace), locationDark=True}
+
 
 -- items
-phone = newItem{itemName="phone", itemDescription="Glowing", itemPickable=True}
-pen = newItem{itemName="pen", itemDescription="Shiny", itemPickable=True}
-thing = newItem{itemName="thing", itemDescription="Strange", itemPickable=True}
-sign = newItem{itemName="sign", itemDescription="W - left, E - right"}
-aMap = newItem{itemName="map", itemDescription="it's a map", itemPickable=True}
-
-flaming_torch = newItem{itemName="flaming_torch", itemPickable=True}
-
+totem = newItem{itemName="totem"}
+tree = newItem{itemName="tree"}
+stick = newItem{itemName="stick", itemPickable=True}
+bananaTree = newItem{itemName="banana_tree"}
+lavaSource = newItem{itemName="lava_source"}
+pond = newItem{itemName="pond"}
+rose = newItem{itemName="rose", itemPickable=True}
+dandelion = newItem{itemName="dandelion", itemPickable=True}
+bush = newItem{itemName="bush"}
+note1 = newItem{itemName="note1", itemPickable=True}
+note2 = newItem{itemName="note2", itemPickable=True}
+note3 = newItem{itemName="note3", itemPickable=True}
+note4 = newItem{itemName="note4", itemPickable=True}
+note5 = newItem{itemName="note5", itemPickable=True}
+notebook = newItem{itemName="notebook", itemPickable=True}
+palm = newItem{itemName="palm"}
+signpost = newItem{itemName="signpost"}
+stone = newItem{itemName="stone", itemPickable=True}
+well = newItem{itemName="well"}
+string = newItem{itemName="string", itemPickable=True}
+wreck = newItem{itemName="wreck"}
+meat = newItem{itemName="meat", itemPickable=True}
+cloth = newItem{itemName="cloth", itemPickable=True}
+sheets = newItem{itemName="sheets", itemPickable=True}
+blastFurnace = newItem{itemName="blast_furnace"}
+anvil = newItem{itemName="anvil"}
+banana = newItem{itemName="banana", itemPickable=True}
+wood = newItem{itemName="wood", itemPickable=True}
+mast = newItem{itemName="mast", itemPickable=True}
+brushwood = newItem{itemName="brushwood", itemPickable=True}
+torch = newItem{itemName="torch", itemPickable=True}
+flamingTorch = newItem{itemName="flaming_torch", itemPickable=True}
+rawIron = newItem{itemName="raw_iron", itemPickable=True}
+fishingRod = newItem{itemName="fishing_rod", itemPickable=True}
+liquidIron = newItem{itemName="liquid_iron", itemPickable=True}
+swordForm = newItem{itemName="sword_form", itemPickable=True}
+fish = newItem{itemName="fish", itemPickable=True}
+hotSword = newItem{itemName="hot_sword", itemPickable=True}
+waterBucket = newItem{itemName="water_bucket", itemPickable=True}
+sword = newItem{itemName="sword", itemPickable=True}
+hardwood = newItem{itemName="hardwood", itemPickable=True}
+deck = newItem{itemName="deck", itemPickable=True}
+sail = newItem{itemName="sail", itemPickable=True}
+raft = newItem{itemName="raft", itemPickable=True}
+people = newItem{itemName="people", itemPickable=True}
+ax = newItem{itemName="ax", itemPickable=True}
+rope = newItem{itemName="rope", itemPickable=True}
+aMap = newItem{itemName="map", itemPickable=True}
+mysteriousStone = newItem{itemName="mysterious_stone", itemPickable=True}
+bucket = newItem{itemName="bucket", itemPickable=True}
+pickax = newItem{itemName="pickax", itemPickable=True}
+ironOre = newItem{itemName="iron_ore"}
 
 blankItem = newItem
 
 -- recipes
-recipeBanana = newRecipe{recipeItem1=phone, recipeItem2=pen, recipeProduct=thing}
-recipeSign = newRecipe{recipeItem1=pen, recipeItem2=thing, recipeProduct=sign}
+recipeBanana = newRecipe{recipeItem1=stone, recipeItem2=bananaTree, recipeProduct=banana}
+recipeWood = newRecipe{recipeItem1=ax, recipeItem2=tree, recipeProduct=wood}
+recipeMast = newRecipe{recipeItem1=ax, recipeItem2=palm, recipeProduct=mast}
+recipeBrushwood1 = newRecipe{recipeItem1=ax, recipeItem2=bush, recipeProduct=brushwood}
+recipeBrushwood2 = newRecipe{recipeItem1=sword, recipeItem2=bush, recipeProduct=brushwood}
+recipeTorch1 = newRecipe{recipeItem1=brushwood, recipeItem2=cloth, recipeProduct=torch}
+recipeTorch2 = newRecipe{recipeItem1=stick, recipeItem2=cloth, recipeProduct=torch}
+recipeFlamingTorch1 = newRecipe{recipeItem1=torch, recipeItem2=lavaSource, recipeProduct=flamingTorch}
+recipeFlamingTorch2 = newRecipe{recipeItem1=torch, recipeItem2=blastFurnace, recipeProduct=flamingTorch}
+recipeRawIron = newRecipe{recipeItem1=pickax, recipeItem2=ironOre, recipeProduct=rawIron}
+recipeFishingRod = newRecipe{recipeItem1=stick, recipeItem2=string, recipeProduct=fishingRod}
+recipeLiquidIron = newRecipe{recipeItem1=blastFurnace, recipeItem2=rawIron, recipeProduct=liquidIron}
+recipeSwordForm = newRecipe{recipeItem1=liquidIron, recipeItem2=stick, recipeProduct=swordForm}
+recipeFish = newRecipe{recipeItem1=pond, recipeItem2=fishing_rod, recipeProduct=fish}
+recipeHotSword = newRecipe{recipeItem1=swordForm, recipeItem2=anvil, recipeProduct=hotSword}
+recipeWaterBucket1 = newRecipe{recipeItem1=pond, recipeItem2=bucket, recipeProduct=waterBucket}
+recipeWaterBucket2 = newRecipe{recipeItem1=well, recipeItem2=bucket, recipeProduct=waterBucket}
+recipeSword1 = newRecipe{recipeItem1=hotSword, recipeItem2=waterBucket, recipeProduct=sword}
+recipeSword2 = newRecipe{recipeItem1=pond, recipeItem2=hotSword, recipeProduct=sword}
+recipeHardwood = newRecipe{recipeItem1=wood, recipeItem2=wood, recipeProduct=hardwood}
+recipeDeck = newRecipe{recipeItem1=hardwood, recipeItem2=rope, recipeProduct=deck}
+recipeSail = newRecipe{recipeItem1=sheets, recipeItem2=mast, recipeProduct=sail}
+recipeRaft = newRecipe{recipeItem1=deck, recipeItem2=sail, recipeProduct=raft}
+recipePeople = newRecipe{recipeItem1=totem, recipeItem2=mysteriousStone, recipeProduct=people}
 
 -- exchanges
 exchangeAx = newExchange{neededItem=phone, offeredItem=thing, exchangeDescription="Have my ax"}
@@ -187,7 +243,7 @@ describeSituation state = printLines [locationName location, (output state), "",
 
 isVisible :: Location -> [Item] -> Bool
 isVisible location inventory = 
-    if locationDark location && not (elem flaming_torch inventory) then
+    if locationDark location && not (elem flamingTorch inventory) then
         False
     else
         True
