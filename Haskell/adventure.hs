@@ -293,28 +293,33 @@ examineNPC npcName state = printMessage (message npc) state
                 Nothing -> "There is no " ++ npcName
 
 give :: String -> String -> GameState -> GameState
-give itName npName state = tryExchange item npc state
+give itName npName state = prepareExchange item npc state
     where
         npc = npcInList npName (locationNPCs (currentLocation state))
         item = itemInList itName (playerItems state)
 
-        tryExchange :: Maybe Item -> Maybe NPC -> GameState -> GameState
-        tryExchange item npc state = 
+        prepareExchange :: Maybe Item -> Maybe NPC -> GameState -> GameState
+        prepareExchange item npc state = 
             case item of
                 Nothing -> printMessage ("You don't have "++itName) state
                 Just item -> 
                     case npc of
                         Nothing -> printMessage ("There is no "++npName) state
-                        Just npc -> doExchange (exchangeInList item (npcExchanges npc)) state
+                        Just npc -> tryExchange (exchangeInList item (npcExchanges npc)) state
 
-doExchange :: Maybe Exchange -> GameState -> GameState
-doExchange exchange state =
+tryExchange :: Maybe Exchange -> GameState -> GameState
+tryExchange exchange state =
     case exchange of
         Nothing -> printMessage "He don't want it" state
-        Just exchange -> state{output="You got "++(itemName (offeredItem exchange)), playerItems=(offeredItem exchange):inventory}
+        Just exchange -> doExchange exchange state
 
-        where
-            inventory = playerItems state 
+doExchange :: Exchange -> GameState -> GameState
+doExchange exchange state = state{output=desc++"\nYou got "++(itemName gift), 
+                                    playerItems=gift:inventory}
+    where
+        desc = exchangeDescription exchange
+        gift = offeredItem exchange
+        inventory = playerItems state 
 
 -- interact with items
 examine :: String -> GameState -> GameState
