@@ -1,3 +1,5 @@
+import Data.List as List
+
 data GameState = GameState 
     { currentLocation   :: Location
     , gameOver          :: Bool
@@ -100,12 +102,19 @@ introductionText = [
 
 instructionsText = [
     "Available commands are:",
-    "",
-    "n, w, s, e    -- move to north, west, south, east", 
-    "pick item     -- pick up item",
-    "examine item  -- examine item",
-    "inventory     -- show inventory",  
-    "quit          -- to end the game and quit.",
+    "start                  -- to start the game.",
+    "n  s  e  w             -- to go in that direction.", 
+    "take Object            -- to pick up an object.",
+    "drop Object            -- to put down an object.",
+    "examine Object         -- to examine an object.",
+    "use Object Object      -- to use the objects together.",
+    "inventory              -- to see the objects you are holding.",
+    "look                   -- to inspect current location."
+    "look_around            -- to see where you can go."
+    "talk NPC               -- to talk with NPC.",
+    "give Object NPC        -- to give an object to NPC.",
+    "instructions           -- to see this message again."
+    "halt                   -- to end the game and quit.",
     ""
     ]
 
@@ -189,7 +198,7 @@ description items npcs = "There are: " ++ (join items) ++ ", " ++ (joinNPC npcs)
 showInventory :: GameState -> GameState
 showInventory state = printMessage (descItems) state
     where
-        descItems = "You have: " ++ join (playerItems state)
+        descItems = join (playerItems state)
 
 
 -- moving
@@ -328,14 +337,34 @@ doExchange exchange state = state{output=desc++"\nYou got "++(itemName gift),
         gift = offeredItem exchange
         inventory = playerItems state 
 
+dropItem :: String -> GameState -> GameState
+dropItem itName state = tryDrop item state
+    where
+        item = itemInList itName (playerItems state)
+
+        tryDrop :: Maybe Item -> GameState -> GameState
+        tryDrop item state = 
+            case item of
+                Nothing -> printMessage ("You don't have "++itName) state
+                Just item -> state{output="You dropped "++itName, 
+                                    playerItems=removeItem item (playerItems state),
+                                    currentLocation=(currentLocation state){locationItems=item:(locationItems (currentLocation state))}
+                                    }
+
 -- interact with items
 examine :: String -> GameState -> GameState
 examine itName state = printMessage (message item) state
     where 
         item = itemInList itName ((locationItems (currentLocation state))++(playerItems state))
+
+        message :: Maybe Item -> String
         message it = 
             case it of
-                Just it -> itemDescription it
+                Just it -> 
+                    if (itemDescription it) /= "" then
+                        itemDescription it
+                    else
+                        "You don't know anything about "++(itemName it)
                 Nothing -> "There is no "++itName
 
 findRecipe :: Item -> Item -> [Recipe] -> Maybe Recipe
@@ -388,8 +417,6 @@ use itemName1 itemName2 state = tryCraft item1 item2 state
                                 Nothing -> printMessage ("You don't have "++itemName2)
                                 Just item2 -> checkRecipe item1 item2
 
-
-
 itemInList :: String -> [Item] -> Maybe Item
 itemInList itName [] = Nothing
 itemInList itName (item:items) = do
@@ -413,9 +440,8 @@ pickUp itemName state = tryPut item state
                             printMessage "You can't do this"
 
 removeItem :: Item -> [Item] -> [Item]
-removeItem _ [] = []
-removeItem it (item:items) | it == item = removeItem it items
-                    | otherwise = item : removeItem it items
+removeItem item list = List.delete item list
+
 
 putInventory :: Item -> GameState -> GameState
 putInventory item state = state{currentLocation=location{locationItems=items}, 
@@ -451,6 +477,7 @@ parseCommand input =
         "examineNPC" -> examineNPC ((words input)!!1)
         "give" -> give ((words input)!!1) ((words input)!!2)
         "look_around" -> lookAround
+        "drop" -> dropItem ((words input)!!1)
         "quit" -> quit
         otherwise -> (\state -> state{output="Unrecognized command"})
 
