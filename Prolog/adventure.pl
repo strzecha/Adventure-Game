@@ -293,10 +293,11 @@ drop(Object) :-
 
 inventory :-
         holding(Object),
-        write(Object), nl,
+        write(Object), write(', '),
         fail.
 
-inventory.
+inventory :-
+        nl.
 
 /* These rules describe how to examine objects */
 
