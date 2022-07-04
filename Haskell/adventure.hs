@@ -119,7 +119,7 @@ printInstructions = printLines instructionsText
 -- locations
 someplace = newLocation{locationID=0, locationName="Someplace", locationDescription="Desc Someplace",
                         north=(Just beach2), west=(Just jungle2), south=(Just jungle3), east=(Just jungle1),
-                        locationItems=[pen, sign, thing, flaming_torch], locationNPCs=[native]}
+                        locationItems=[pen, sign, thing, flaming_torch, aMap], locationNPCs=[native]}
 jungle1 = newLocation{locationID=1, locationName="Jungle1", locationDescription="Desc Jungle",
                     west=(Just someplace)}
 jungle2 = newLocation{locationID=2, locationName="Jungle2", locationDescription="Desc Jungle",
@@ -134,6 +134,7 @@ phone = newItem{itemName="phone", itemDescription="Glowing", itemPickable=True}
 pen = newItem{itemName="pen", itemDescription="Shiny", itemPickable=True}
 thing = newItem{itemName="thing", itemDescription="Strange", itemPickable=True}
 sign = newItem{itemName="sign", itemDescription="W - left, E - right"}
+aMap = newItem{itemName="map", itemDescription="it's a map", itemPickable=True}
 
 flaming_torch = newItem{itemName="flaming_torch", itemPickable=True}
 
@@ -209,10 +210,16 @@ canMove location direction = do
 
 moveTo :: Location -> GameState -> GameState
 moveTo location state = state{currentLocation=location, output="",
-                            locationsDiscovered=id:locationsID}
+                            locationsDiscovered=newIDs}
     where
         id = locationID location
         locationsID = locationsDiscovered state
+        newIDs = 
+            if elem aMap (playerItems state) then
+                id:locationsID
+            else
+                locationsID
+        
 
 
 move :: String -> GameState -> GameState
