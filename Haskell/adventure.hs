@@ -464,14 +464,15 @@ talk npcName state = printMessage (message npc) state
                 Just npc -> npcSpeech npc
                 Nothing -> "There is no " ++ npcName
 
-examineNPC :: String -> GameState -> GameState
-examineNPC npcName state = printMessage (message npc) state
+examineNPC :: NPC -> GameState -> GameState
+examineNPC npc state = printMessage (message npc) state
     where
-        npc = npcInList npcName (locationNPCs (currentLocation state))
+        message :: NPC -> String
         message npc = 
-            case npc of
-                Just npc -> npcDescription npc
-                Nothing -> "There is no " ++ npcName
+            if (npcDescription npc) /= "" then
+                npcDescription npc
+            else
+                ("You don't know anything about "++(npcName npc))
 
 give :: String -> String -> GameState -> GameState
 give itName npName state = prepareExchange item npc state
@@ -517,20 +518,28 @@ dropItem itName state = tryDrop item state
                                     }
 
 -- interact with items
-examine :: String -> GameState -> GameState
-examine itName state = printMessage (message item) state
-    where 
-        item = itemInList itName ((locationItems (currentLocation state))++(playerItems state))
+doExamination :: String -> GameState -> GameState
+doExamination name state = 
+    case npc of
+        Just npc -> examineNPC npc state
+        Nothing -> case item of
+            Just item -> examine item state
+            Nothing -> printMessage ("There is no "++name) state
 
-        message :: Maybe Item -> String
+    where
+        npc = npcInList name (locationNPCs (currentLocation state))
+        item = itemInList name ((locationItems (currentLocation state))++(playerItems state))
+
+
+examine :: Item -> GameState -> GameState
+examine item state = printMessage (message item) state
+    where 
+        message :: Item -> String
         message it = 
-            case it of
-                Just it -> 
-                    if (itemDescription it) /= "" then
-                        itemDescription it
-                    else
-                        "You don't know anything about "++(itemName it)
-                Nothing -> "There is no "++itName
+            if (itemDescription it) /= "" then
+                itemDescription it
+            else
+                "You don't know anything about "++(itemName it)
 
 findRecipe :: Item -> Item -> [Recipe] -> Maybe Recipe
 findRecipe _ _ [] = Nothing
@@ -686,13 +695,12 @@ parseCommand input =
         "s" -> move input
         "w" -> move input
         "e" -> move input
-        "examine" -> examine ((words input)!!1)
+        "examine" -> doExamination ((words input)!!1)
         "use" -> use ((words input)!!1) ((words input)!!2)
         "inventory" -> showInventory 
         "take" -> pickUp ((words input)!!1)
         "drop" -> dropItem ((words input)!!1)
         "talk" -> talk ((words input)!!1)
-        "examineNPC" -> examineNPC ((words input)!!1)
         "give" -> give ((words input)!!1) ((words input)!!2)
         "look_around" -> lookAround
         "leave" -> leave
