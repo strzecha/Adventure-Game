@@ -628,33 +628,22 @@ quit :: GameState -> GameState
 quit state = state{gameOver=True}
 
 atOcean :: GameState -> Bool
-atOcean state = 
-    if elem (locationID (currentLocation state)) [19, 26, 32] then
-        True
-    else
-        False
+atOcean state = elem (locationID (currentLocation state)) [19, 26, 32]
+
 
 hasNotes :: GameState -> Bool
 hasNotes state =
-    if elem note1 (playerItems state) && elem note2 (playerItems state) && elem note3 (playerItems state) &&
-        elem note4 (playerItems state) && elem note5 (playerItems state) then
-            True
-    else
-            False
+    elem note1 (playerItems state) && elem note2 (playerItems state) && elem note3 (playerItems state) &&
+    elem note4 (playerItems state) && elem note5 (playerItems state)
+
 
 hasRaft :: GameState -> Bool
-hasRaft state = 
-    if elem raft (playerItems state) then
-        True
-    else
-        False
+hasRaft state = elem raft (playerItems state)
+
 
 hasPeople :: GameState -> Bool
-hasPeople state = 
-    if elem people (playerItems state) then
-        True
-    else
-        False
+hasPeople state = elem people (playerItems state)
+
 
 leave :: GameState -> GameState            
 leave state = 
