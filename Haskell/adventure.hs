@@ -115,7 +115,7 @@ instructionsText = [
     "look_around            -- to see where you can go.",
     "talk NPC               -- to talk with NPC.",
     "give Object NPC        -- to give an object to NPC.",
-    "instructions           -- to see this instructions.",
+    "instructions           -- to see these instructions.",
     "leave                  -- to leave an island.",
     "halt                   -- to end the game and quit.",
     ""
@@ -396,8 +396,6 @@ moveTo location state = state{currentLocation=location, output="",
             else
                 locationsID
         
-
-
 move :: String -> GameState -> GameState
 move direction state = go (nextLoc) state
     where
@@ -576,21 +574,30 @@ checkRecipe item1 item2 state =
     where
         recipe = findRecipe item1 item2 (recipes state)
 
+isAvailable :: String -> GameState -> Item
+isAvailable itName state = 
+    case item of
+        Nothing -> blankItem
+        Just item -> item
+
+        where
+            item = itemInList itName ((locationItems (currentLocation state))++(playerItems state))
+
 use :: String -> String -> GameState -> GameState
 use itemName1 itemName2 state = tryCraft item1 item2 state
     where
-        item1 = itemInList itemName1 (playerItems state)
-        itemLoc = itemInList itemName2 (locationItems (currentLocation state))
-        itemInv = itemInList itemName2 (playerItems state)
-        item2 = if itemInv /= Nothing then itemInv else itemLoc
+        item1 = isAvailable itemName1 state
+        item2 = isAvailable itemName2 state
 
-        tryCraft :: Maybe Item -> Maybe Item -> GameState -> GameState
+        tryCraft ::Item -> Item -> GameState -> GameState
         tryCraft item1 item2 = do
-            case item1 of
-                Nothing -> printMessage ("You don't have "++itemName1)
-                Just item1 -> case item2 of
-                                Nothing -> printMessage ("You don't have "++itemName2)
-                                Just item2 -> checkRecipe item1 item2
+            if item1 == blankItem then
+                printMessage ("You don't have "++itemName1)
+            else
+                if item2 == blankItem then
+                    printMessage ("You don't have "++itemName2)
+                else
+                    checkRecipe item1 item2
 
 itemInList :: String -> [Item] -> Maybe Item
 itemInList itName [] = Nothing
