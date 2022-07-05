@@ -1,40 +1,41 @@
 import Data.List as List
 
 data GameState = GameState 
-    { currentLocation   :: Location
-    , gameOver          :: Bool
-    , output            :: String
-    , playerItems       :: [Item]
-    , recipes           :: [Recipe]
-    , locationsDiscovered :: [Integer]
+    { currentLocation       :: Location
+    , gameOver              :: Bool
+    , output                :: String
+    , playerItems           :: [Item]
+    , recipes               :: [Recipe]
+    , locationsDiscovered   :: [Integer]
     }
 
 data Location = Location
     {
-        locationID      :: Integer
-    ,   locationName    :: String
-    ,   locationDescription     :: String
-    ,   north           :: Maybe Location
-    ,   west            :: Maybe Location
-    ,   south           :: Maybe Location
-    ,   east            :: Maybe Location
-    ,   locationItems   :: [Item]
-    ,   locationNPCs    :: [NPC]
-    ,   locationDark    :: Bool
+        locationID          :: Integer
+    ,   locationName        :: String
+    ,   locationDescription :: String
+    ,   north               :: Maybe Location
+    ,   west                :: Maybe Location
+    ,   south               :: Maybe Location
+    ,   east                :: Maybe Location
+    ,   locationItems       :: [Item]
+    ,   locationNPCs        :: [NPC]
+    ,   locationDark        :: Bool
     } deriving (Eq, Show)
 
 data Item = Item
     {
-        itemName         :: String
-    ,   itemDescription  :: String
-    ,   itemPickable     :: Bool
+        itemName            :: String
+    ,   itemDescription     :: String
+    ,   itemPickable        :: Bool
+    ,   itemReusable        :: Bool
     } deriving (Eq, Show)
 
 data Recipe = Recipe
     {
-        recipeItem1     :: Item
-    ,   recipeItem2     :: Item
-    ,   recipeProduct   :: Item
+        recipeItem1         :: Item
+    ,   recipeItem2         :: Item
+    ,   recipeProduct       :: Item
     } deriving (Eq, Show)
 
 data Exchange = Exchange
@@ -46,10 +47,10 @@ data Exchange = Exchange
 
 data NPC = NPC
     {
-        npcName         :: String
-    ,   npcSpeech       :: String
-    ,   npcDescription  :: String
-    ,   npcExchanges    :: [Exchange]
+        npcName             :: String
+    ,   npcSpeech           :: String
+    ,   npcDescription      :: String
+    ,   npcExchanges        :: [Exchange]
     } deriving (Eq, Show)
 
 newLocation :: Location
@@ -70,7 +71,8 @@ newItem :: Item
 newItem = Item{
     itemName = "",
     itemDescription = "",
-    itemPickable = False
+    itemPickable = False,
+    itemReusable = False
 }
 
 newRecipe :: Recipe
@@ -205,26 +207,26 @@ basement = newLocation{locationID=37, locationName="basement", locationDescripti
 
 
 -- items
-totem = newItem{itemName="totem"}
+totem = newItem{itemName="totem", itemReusable=True}
 tree = newItem{itemName="tree"}
 stick = newItem{itemName="stick", itemPickable=True}
-bananaTree = newItem{itemName="banana_tree"}
-lavaSource = newItem{itemName="lava_source"}
-pond = newItem{itemName="pond"}
+bananaTree = newItem{itemName="banana_tree", itemReusable=True}
+lavaSource = newItem{itemName="lava_source", itemReusable=True}
+pond = newItem{itemName="pond", itemReusable=True}
 rose = newItem{itemName="rose", itemPickable=True, itemDescription="It's beautiful flower."}
 dandelion = newItem{itemName="dandelion", itemPickable=True, itemDescription="Common flower."}
 bush = newItem{itemName="bush"}
 palm = newItem{itemName="palm"}
 signpost = newItem{itemName="signpost", itemDescription="North - trees, East - hot mountaint, South - people, West - a lot of water"}
 stone = newItem{itemName="stone", itemPickable=True}
-well = newItem{itemName="well", itemDescription="The winch works, but the bucket is missing."}
+well = newItem{itemName="well", itemDescription="The winch works, but the bucket is missing.", itemReusable=True}
 string = newItem{itemName="string", itemPickable=True}
 wreck = newItem{itemName="wreck", itemDescription="A very primitive boat made up of several logs and lianas. But it looks like it was burnt?"}
 meat = newItem{itemName="meat", itemPickable=True}
 cloth = newItem{itemName="cloth", itemPickable=True, itemDescription="It seems to be flammable."}
 sheets = newItem{itemName="sheets", itemPickable=True}
-blastFurnace = newItem{itemName="blast_furnace"}
-anvil = newItem{itemName="anvil"}
+blastFurnace = newItem{itemName="blast_furnace", itemReusable=True}
+anvil = newItem{itemName="anvil", itemReusable=True}
 banana = newItem{itemName="banana", itemPickable=True}
 wood = newItem{itemName="wood", itemPickable=True}
 mast = newItem{itemName="mast", itemPickable=True}
@@ -232,23 +234,23 @@ brushwood = newItem{itemName="brushwood", itemPickable=True, itemDescription="A 
 torch = newItem{itemName="torch", itemPickable=True}
 flamingTorch = newItem{itemName="flaming_torch", itemPickable=True, itemDescription="The light of this torch can light up the darkness."}
 rawIron = newItem{itemName="raw_iron", itemPickable=True}
-fishingRod = newItem{itemName="fishing_rod", itemPickable=True}
+fishingRod = newItem{itemName="fishing_rod", itemPickable=True, itemReusable=True}
 liquidIron = newItem{itemName="liquid_iron", itemPickable=True}
 swordForm = newItem{itemName="sword_form", itemPickable=True}
 fish = newItem{itemName="fish", itemPickable=True}
 hotSword = newItem{itemName="hot_sword", itemPickable=True}
 waterBucket = newItem{itemName="water_bucket", itemPickable=True}
-sword = newItem{itemName="sword", itemPickable=True}
+sword = newItem{itemName="sword", itemPickable=True, itemReusable=True}
 hardwood = newItem{itemName="hardwood", itemPickable=True}
 deck = newItem{itemName="deck", itemPickable=True}
 sail = newItem{itemName="sail", itemPickable=True}
 raft = newItem{itemName="raft", itemPickable=True}
-ax = newItem{itemName="ax", itemPickable=True, itemDescription="Old, but perfect for cutting trees."}
+ax = newItem{itemName="ax", itemPickable=True, itemDescription="Old, but perfect for cutting trees.", itemReusable=True}
 rope = newItem{itemName="rope", itemPickable=True}
 aMap = newItem{itemName="map", itemPickable=True, itemDescription="Thanks to the map, you can discover and remember new areas on the island."}
 mysteriousStone = newItem{itemName="mysterious_stone", itemPickable=True}
 bucket = newItem{itemName="bucket", itemPickable=True}
-pickax = newItem{itemName="pickax", itemPickable=True, itemDescription="Slightly rusty, but still fit for work."}
+pickax = newItem{itemName="pickax", itemPickable=True, itemDescription="Slightly rusty, but still fit for work.", itemReusable=True}
 ironOre = newItem{itemName="iron_ore"}
 phone = newItem{itemName="phone", itemPickable=True, itemDescription="Works, but no signal."}
 note1 = newItem{itemName="note1", itemPickable=True, 
@@ -500,7 +502,7 @@ doExchange exchange state = state{output=desc++"\nYou got "++(itemName gift),
     where
         desc = exchangeDescription exchange
         gift = offeredItem exchange
-        inventory = playerItems state 
+        inventory = removeItem (neededItem exchange) (playerItems state) 
 
 dropItem :: String -> GameState -> GameState
 dropItem itName state = tryDrop item state
@@ -541,22 +543,30 @@ findRecipe item1 item2 (recipe:recipes) =
     else
         findRecipe item1 item2 recipes 
 
+useUp :: Item -> GameState -> GameState
+useUp item state = 
+    if elem item (playerItems state) then
+        if itemReusable item then
+            state
+        else
+            state{playerItems=inventory}
+    else
+        if itemReusable item then
+            state
+        else
+            state{currentLocation=location{locationItems=locItems}}
+    
+        where
+            inventory = removeItem item (playerItems state)
+            location = currentLocation state
+            locItems = removeItem item (locationItems location)
+
 craftItem :: Item -> Item -> Recipe -> GameState -> GameState
-craftItem item1 item2 recipe state = state{playerItems=item:inventory, currentLocation=location{locationItems=locItems},
-                                           output="You got "++(itemName item)}
+craftItem item1 item2 recipe state = newState{playerItems=item:inventory, output="You got "++(itemName item)}
     where
-        location = (currentLocation state)
-
-        inventory = if elem item2 (playerItems state) then
-                        removeItem item1 (removeItem item2 (playerItems state))
-                    else
-                        removeItem item1 (playerItems state)
-
-        locItems =  if elem item2 (playerItems state) then
-                        (locationItems location)
-                    else
-                        removeItem item2 (locationItems location)
-        item = (recipeProduct recipe)
+        item = recipeProduct recipe
+        newState = useUp item2 (useUp item1 state)
+        inventory = playerItems newState
 
 checkRecipe :: Item -> Item -> GameState -> GameState
 checkRecipe item1 item2 state = 
@@ -625,7 +635,7 @@ readCommand = do
     return xs
 
 quit :: GameState -> GameState
-quit state = state{gameOver=True}
+quit state = state{gameOver=True, output="Game quitted"}
 
 atOcean :: GameState -> Bool
 atOcean state = elem (locationID (currentLocation state)) [19, 26, 32]
@@ -679,7 +689,7 @@ parseCommand input =
         "give" -> give ((words input)!!1) ((words input)!!2)
         "look_around" -> lookAround
         "leave" -> leave
-        "quit" -> quit
+        "halt" -> quit
         otherwise -> (\state -> state{output="Unrecognized command"})
 
 startingState :: IO GameState
