@@ -113,7 +113,8 @@ instructionsText = [
     "look_around            -- to see where you can go.",
     "talk NPC               -- to talk with NPC.",
     "give Object NPC        -- to give an object to NPC.",
-    "instructions           -- to see this message again.",
+    "instructions           -- to see this instructions.",
+    "leave                  -- to leave an island.",
     "halt                   -- to end the game and quit.",
     ""
     ]
@@ -626,6 +627,52 @@ readCommand = do
 quit :: GameState -> GameState
 quit state = state{gameOver=True}
 
+atOcean :: GameState -> Bool
+atOcean state = 
+    if elem (locationID (currentLocation state)) [19, 26, 32] then
+        True
+    else
+        False
+
+hasNotes :: GameState -> Bool
+hasNotes state =
+    if elem note1 (playerItems state) && elem note2 (playerItems state) && elem note3 (playerItems state) &&
+        elem note4 (playerItems state) && elem note5 (playerItems state) then
+            True
+    else
+            False
+
+hasRaft :: GameState -> Bool
+hasRaft state = 
+    if elem raft (playerItems state) then
+        True
+    else
+        False
+
+hasPeople :: GameState -> Bool
+hasPeople state = 
+    if elem people (playerItems state) then
+        True
+    else
+        False
+
+leave :: GameState -> GameState            
+leave state = 
+    if hasRaft state && atOcean state then
+        if hasNotes state && hasPeople state then
+            state{gameOver=True, output="You left the island. You rescued rest of the passengers and complete the story. You won!"}
+        else if hasNotes state then
+            state{gameOver=True, output="You left the island. You complete the story, but didn't find rest of the passengers."}
+        else if hasPeople state then
+            state{gameOver=True, output="You left the island. You found the rest of the passengers, but didn't know their full story."}
+        else
+            state{gameOver=True, output="You left the island, but dont't know anything."}   
+    else if hasRaft state then
+        printMessage "You aren't at the ocean" state
+    else 
+        printMessage "You can't swim across the ocean. You need boat." state
+
+
 parseCommand :: String -> GameState -> GameState
 parseCommand input = 
     case head (words input) of
@@ -637,27 +684,31 @@ parseCommand input =
         "use" -> use ((words input)!!1) ((words input)!!2)
         "inventory" -> showInventory 
         "take" -> pickUp ((words input)!!1)
+        "drop" -> dropItem ((words input)!!1)
         "talk" -> talk ((words input)!!1)
         "examineNPC" -> examineNPC ((words input)!!1)
         "give" -> give ((words input)!!1) ((words input)!!2)
         "look_around" -> lookAround
-        "drop" -> dropItem ((words input)!!1)
+        "leave" -> leave
         "quit" -> quit
         otherwise -> (\state -> state{output="Unrecognized command"})
+
+startingState :: IO GameState
+startingState = return (GameState fields2 False "" [phone] recipes [0])
+    where
+        recipes = [recipeBanana, recipeWood, recipeMast, recipeBrushwood1, recipeBrushwood2, recipeTorch1,
+                    recipeTorch2, recipeFlamingTorch1, recipeFlamingTorch2, recipeRawIron, recipeFishingRod,
+                    recipeLiquidIron, recipeSwordForm, recipeFish, recipeHotSword, recipeWaterBucket1,
+                    recipeWaterBucket2, recipeSword1, recipeSword2, recipeHardwood, recipeDeck, recipeSail,
+                    recipeRaft, recipePeople]
 
 gameLoop :: IO ()
 gameLoop = do
     state <- startingState
     finalState <- play state
+    putStrLn (output finalState)
     return ()
     where
-        startingState = do
-            return (GameState fields2 False "" [phone] [recipeBanana, recipeWood, recipeMast, recipeBrushwood1, recipeBrushwood2, 
-                                                        recipeTorch1, recipeTorch2, recipeFlamingTorch1, recipeFlamingTorch2,
-                                                        recipeRawIron, recipeFishingRod, recipeLiquidIron, recipeSwordForm, 
-                                                        recipeFish, recipeHotSword, recipeWaterBucket1, recipeWaterBucket2,
-                                                        recipeSword1, recipeSword2, recipeHardwood, recipeDeck, recipeSail,
-                                                        recipeRaft, recipePeople] [0])
         play state = do
             newState <- playFrame state
             if gameOver newState then
