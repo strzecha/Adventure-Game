@@ -650,6 +650,11 @@ readCommand = do
     xs <- getLine
     return xs
 
+showInstructions :: GameState -> GameState
+showInstructions state = state{output=instructions}
+    where
+        instructions = List.intercalate "\n" instructionsText
+
 quit :: GameState -> GameState
 quit state = state{gameOver=True, output="Game quitted"}
 
@@ -704,6 +709,7 @@ parseCommand input =
         "give" -> give ((words input)!!1) ((words input)!!2)
         "look_around" -> lookAround
         "leave" -> leave
+        "instructions" -> showInstructions
         "halt" -> quit
         otherwise -> (\state -> state{output="Unrecognized command"})
 
