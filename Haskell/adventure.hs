@@ -342,21 +342,31 @@ printMessage :: String -> GameState -> GameState
 printMessage msg state = state{output=msg}
 
 describeSituation :: GameState -> IO ()
-describeSituation state = printLines [locationName location, (output state), "",
-                                      (desc), ""]
+describeSituation state = printLines [output state, ""]
+
+look :: GameState -> GameState
+look state = printMessage ((locationDescription location)++"\n\n"++desc) state
     where
         location = currentLocation state
         desc = 
             if isVisible location (playerItems state) then
                 description (locationItems (currentLocation state)) (locationNPCs (currentLocation state))
             else 
-                "You see darkness only"     
+                "You see darkness only"   
 
 isVisible :: Location -> [Item] -> Bool
 isVisible location inventory = not (locationDark location && not (elem flamingTorch inventory))
 
 description :: [Item] -> [NPC] -> String
-description items npcs = "There are: " ++ (join items) ++ ", " ++ (joinNPC npcs)
+description items npcs = 
+    if (length items) > 0 && (length npcs) > 0 then
+        "There are: " ++ (join items) ++ ", " ++ (joinNPC npcs)
+    else if (length items) > 0 then
+        "There are: " ++ (join items)
+    else if (length npcs) > 0 then
+        "There are: " ++ (joinNPC npcs)
+    else
+        "There are nothing"
 
 showInventory :: GameState -> GameState
 showInventory state = printMessage (descItems) state
@@ -381,7 +391,7 @@ canMove location direction = do
         Just location -> return True
 
 moveTo :: Location -> GameState -> GameState
-moveTo location state = state{currentLocation=location, output="",
+moveTo location state = look state{currentLocation=location, output="",
                             locationsDiscovered=newIDs}
     where
         id = locationID location
@@ -718,23 +728,27 @@ tryCommandThree command input =
 
 parseCommand :: String -> GameState -> GameState
 parseCommand input = 
-    case head (words input) of
-        "n" -> tryCommandOne move input
-        "s" -> tryCommandOne move input
-        "w" -> tryCommandOne move input
-        "e" -> tryCommandOne move input
-        "examine" -> tryCommandTwo doExamination input
-        "use" -> tryCommandThree use input
-        "inventory" -> tryCommandZero showInventory input
-        "take" -> tryCommandTwo pickUp input
-        "drop" -> tryCommandTwo dropItem input
-        "talk" -> tryCommandTwo talk input
-        "give" -> tryCommandThree give input
-        "look_around" -> tryCommandZero lookAround input
-        "leave" -> tryCommandZero leave input
-        "instructions" -> tryCommandZero showInstructions input
-        "halt" -> tryCommandZero quit input
-        otherwise -> (\state -> state{output="Unrecognized command"})
+    if input /= "" then
+        case head (words input) of
+            "n" -> tryCommandOne move input
+            "s" -> tryCommandOne move input
+            "w" -> tryCommandOne move input
+            "e" -> tryCommandOne move input
+            "examine" -> tryCommandTwo doExamination input
+            "use" -> tryCommandThree use input
+            "inventory" -> tryCommandZero showInventory input
+            "take" -> tryCommandTwo pickUp input
+            "drop" -> tryCommandTwo dropItem input
+            "talk" -> tryCommandTwo talk input
+            "give" -> tryCommandThree give input
+            "look" -> tryCommandZero look input
+            "look_around" -> tryCommandZero lookAround input
+            "leave" -> tryCommandZero leave input
+            "instructions" -> tryCommandZero showInstructions input
+            "halt" -> tryCommandZero quit input
+            otherwise -> (\state -> state{output="Unrecognized command"})
+    else
+        \state -> state{output="Unrecognized command"}
 
 startingState :: IO GameState
 startingState = return (GameState fields2 False "" [phone] recipes [0])
