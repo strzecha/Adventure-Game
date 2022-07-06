@@ -316,7 +316,7 @@ exchangeSword = newExchange{neededItem=rawIron, offeredItem=sword,
 
 -- NPCs
 native = newNPC{npcName="native", npcExchanges=[exchangeAx, exchangeMap],
-                npcSpeech="Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I'd like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I'm afraid to walk in the jungle. If you help me, I'll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item."}
+                npcSpeech="Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I'd like to take him some meat, but I haven't had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I'm afraid to walk in the jungle. If you help me, I'll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item."}
 oldNative = newNPC{npcName="old_native", npcExchanges=[exchangeBucket, exchangeBanana],
                 npcSpeech="Hello friend. I am m'Ilio. I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders. I would like to leave this cave, but I am afraid of the reaction of the other inhabitants. However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time. I am also very hungry. My son brings me food sometimes, but it's usually fruit or nuts. I want meat. Bring them to me and I will reward you."}
 monkey = newNPC{npcName="monkey", npcExchanges=[exchangeRope], 
@@ -353,11 +353,7 @@ describeSituation state = printLines [locationName location, (output state), "",
                 "You see darkness only"     
 
 isVisible :: Location -> [Item] -> Bool
-isVisible location inventory = 
-    if locationDark location && not (elem flamingTorch inventory) then
-        False
-    else
-        True
+isVisible location inventory = not (locationDark location && not (elem flamingTorch inventory))
 
 description :: [Item] -> [NPC] -> String
 description items npcs = "There are: " ++ (join items) ++ ", " ++ (joinNPC npcs)
@@ -692,25 +688,52 @@ leave state =
     else 
         printMessage "You can't swim across the ocean. You need boat." state
 
+tryCommandZero :: (GameState -> GameState) -> String -> (GameState -> GameState)
+tryCommandZero command input = 
+    if length (words input) == 1 then
+        command
+    else
+        \state -> state{output="Wrong number of arguments"}
+
+tryCommandOne :: (String -> GameState -> GameState) -> String -> (GameState -> GameState)
+tryCommandOne command input = 
+    if length (words input) == 1 then
+        command input
+    else
+        \state -> state{output="Wrong number of arguments"}
+
+tryCommandTwo :: (String -> GameState -> GameState) -> String -> (GameState -> GameState)
+tryCommandTwo command input = 
+    if length (words input) == 2 then
+        command ((words input)!!1)
+    else
+        \state -> state{output="Wrong number of arguments"}
+
+tryCommandThree :: (String -> String -> GameState -> GameState) -> String -> (GameState -> GameState)
+tryCommandThree command input = 
+    if length (words input) == 3 then
+        command ((words input)!!1) ((words input)!!2)
+    else
+        \state -> state{output="Wrong number of arguments"}
 
 parseCommand :: String -> GameState -> GameState
 parseCommand input = 
     case head (words input) of
-        "n" -> move input
-        "s" -> move input
-        "w" -> move input
-        "e" -> move input
-        "examine" -> doExamination ((words input)!!1)
-        "use" -> use ((words input)!!1) ((words input)!!2)
-        "inventory" -> showInventory 
-        "take" -> pickUp ((words input)!!1)
-        "drop" -> dropItem ((words input)!!1)
-        "talk" -> talk ((words input)!!1)
-        "give" -> give ((words input)!!1) ((words input)!!2)
-        "look_around" -> lookAround
-        "leave" -> leave
-        "instructions" -> showInstructions
-        "halt" -> quit
+        "n" -> tryCommandOne move input
+        "s" -> tryCommandOne move input
+        "w" -> tryCommandOne move input
+        "e" -> tryCommandOne move input
+        "examine" -> tryCommandTwo doExamination input
+        "use" -> tryCommandThree use input
+        "inventory" -> tryCommandZero showInventory input
+        "take" -> tryCommandTwo pickUp input
+        "drop" -> tryCommandTwo dropItem input
+        "talk" -> tryCommandTwo talk input
+        "give" -> tryCommandThree give input
+        "look_around" -> tryCommandZero lookAround input
+        "leave" -> tryCommandZero leave input
+        "instructions" -> tryCommandZero showInstructions input
+        "halt" -> tryCommandZero quit input
         otherwise -> (\state -> state{output="Unrecognized command"})
 
 startingState :: IO GameState
