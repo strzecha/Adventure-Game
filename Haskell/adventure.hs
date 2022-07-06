@@ -1,5 +1,6 @@
 import Data.List as List
 
+-- custom datatypes
 data GameState = GameState 
     { currentLocation       :: Location
     , gameOver              :: Bool
@@ -54,6 +55,7 @@ data NPC = NPC
     ,   npcExchanges        :: [Exchange]
     } deriving (Eq, Show)
 
+-- custom constructors
 newLocation :: Location
 newLocation = Location{
     locationID = -1,
@@ -98,7 +100,7 @@ newExchange = Exchange{
     exchangeDescription = ""
 }
 
-
+-- texts
 introductionText = [
     ""
     ]
@@ -153,7 +155,7 @@ tunnel1 = newLocation{locationID=10, locationName="tunnel1", locationDescription
                         locationItems=[note3], north=Just tunnelEntrance, east=Just tunnel2, locationDark=True}
 tunnel2 = newLocation{locationID=11, locationName="tunnel2", locationDescription="You reached a fork. The walls of the tunnel have a strange color...",
                         locationItems=[ironOre], north=Just ancientRuin, south=Just cave, west=Just tunnel1, locationDark=True}
-mountainPath1 = newLocation{locationID=12, locationName="mountain_path1", locationDescription="You are getting closer to the top of the mountain. It''s getting hot...",
+mountainPath1 = newLocation{locationID=12, locationName="mountain_path1", locationDescription="You are getting closer to the top of the mountain. It's getting hot...",
                         locationItems=[note2], north=Just volcanoPeak, south=Just mountainPath2}
 fields1 = newLocation{locationID=13, locationName="fields1", locationDescription="You are in the fields.", 
                         locationItems=[note4], north=Just forest1, south=Just beach1}
@@ -175,9 +177,9 @@ fields2 = newLocation{locationID=21, locationName="fields2", locationDescription
                         north=Just planeWreck, east=Just crossroads, west=Just beach1}
 crossroads = newLocation{locationID=22, locationName="crossroads", locationDescription="You are at a crossroads. Fortunately, someone put up a signpost here.",
                         locationItems=[signpost], north=Just jungle2, east=Just path1, south=Just village1, west=Just fields2}
-path1 = newLocation{locationID=23, locationName="path1", locationDescription="You are on the path. You don''t know where it leads yet.",
+path1 = newLocation{locationID=23, locationName="path1", locationDescription="You are on the path. You don't know where it leads yet.",
                         north=Just darkJungle2, east=Just path3, south=Just wellSquare, west=Just crossroads}
-path3 = newLocation{locationID=24, locationName="path3", locationDescription="You are on the path. You don''t know where it leads yet.",
+path3 = newLocation{locationID=24, locationName="path3", locationDescription="You are on the path. You don't know where it leads yet.",
                         east=Just path2, south=Just village2, west=Just path1}
 path2 = newLocation{locationID=25, locationName="path2", locationDescription="You are on the path. It starts to turn north and seems to lead to the top of the mountain.",
                         locationItems=[stone], north=Just mountainPath2, west=Just path3}
@@ -205,7 +207,6 @@ oldHouse = newLocation{locationID=36, locationName="old_house", locationDescript
                         locationItems=[blastFurnace], locationNPCs=[blacksmith], north=Just wellSquare, east=Just basement}
 basement = newLocation{locationID=37, locationName="basement", locationDescription="You entered the dark basement.",
                         locationItems=[anvil], west=Just oldHouse, locationDark=True}
-
 
 -- items
 totem = newItem{itemName="totem", itemReusable=True}
@@ -263,9 +264,9 @@ note3 = newItem{itemName="note3", itemPickable=True,
 note4 = newItem{itemName="note4", itemPickable=True, 
                 itemDescription="\"We cut down some trees. One of them was really big. It grew next to a primitive totem in the north of the island. The natives mentioned something as a special tree, but we didn't care. We are going to the ocean now to sail to another island.\""}
 note5 = newItem{itemName="note5", itemPickable=True, 
-                itemDescription="\"We built a boat, we''re le\"\nThe note ends in half a sentence."}
+                itemDescription="\"We built a boat, we're le\"\nThe note ends in half a sentence."}
 notebook = newItem{itemName="notebook", itemPickable=True, 
-                itemDescription="This looks like the diary of one of the passengers. The handwriting is very blurry.\n\"We have a damaged engine, the pilot says we have to make an emergency landing on (unreadable).\"\n\"We crashed, only three of us survived. Our little group of survivors will try to find rescue. We tried to find all (unreadable), but we may have missed someone. So I leave this (unreadable). If you read this - find us. We''re going (unreadable).\"\nThe next pages are torn out."}
+                itemDescription="This looks like the diary of one of the passengers. The handwriting is very blurry.\n\"We have a damaged engine, the pilot says we have to make an emergency landing on (unreadable).\"\n\"We crashed, only three of us survived. Our little group of survivors will try to find rescue. We tried to find all (unreadable), but we may have missed someone. So I leave this (unreadable). If you read this - find us. We're going (unreadable).\"\nThe next pages are torn out."}
 people = newItem{itemName="people", itemPickable=True, 
                 itemDescription="Thank God you're here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out. Lightning struck all around us, and finally one hit our boat and sent us to nothingness. You save our lives."}
 
@@ -317,7 +318,7 @@ exchangeSword = newExchange{neededItem=rawIron, offeredItem=sword,
 
 -- NPCs
 native = newNPC{npcName="native", npcExchanges=[exchangeAx, exchangeMap],
-                npcSpeech="Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I'd like to take him some meat, but I haven't had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I'm afraid to walk in the jungle. If you help me, I'll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item."}
+                npcSpeech="Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I'd like to take him some meat, but I haven't had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I'm afraid to walk in the jungle. If you help me, I'll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item."}
 oldNative = newNPC{npcName="old_native", npcExchanges=[exchangeBucket, exchangeBanana],
                 npcSpeech="Hello friend. I am m'Ilio. I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders. I would like to leave this cave, but I am afraid of the reaction of the other inhabitants. However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time. I am also very hungry. My son brings me food sometimes, but it's usually fruit or nuts. I want meat. Bring them to me and I will reward you."}
 monkey = newNPC{npcName="monkey", npcExchanges=[exchangeRope], 
@@ -328,6 +329,7 @@ ancientGuard = newNPC{npcName="ancient_guard", npcExchanges=[exchangeMysteriousS
                 npcSpeech="Hello traveler. I used to be a ruthless knight but was cursed by the village shaman. Now I am only a stone statue. The shaman said the curse would be lifted if I became a \"real warrior\". I do not know what it means. Help me please and I will reward you generously."}
 blacksmith = newNPC{npcName="blacksmith", npcExchanges=[exchangePickax, exchangeSword],
                 npcSpeech="Hello traveler. I am a local blacksmith. I could forge a simple sword for you or let you use my workshop, but unfortunately I don't have the right resources. I heard that there are still deposits of iron left in the cave in the north of the island. If you give me a fish, I will give you my pickaxe so that you can mine the ore."}
+
 -- describing
 join :: [Item] -> String
 join [] = ""
@@ -368,12 +370,6 @@ description items npcs =
         "There are: " ++ (joinNPC npcs)
     else
         "There are nothing"
-
-showInventory :: GameState -> GameState
-showInventory state = printMessage (descItems) state
-    where
-        descItems = join (playerItems state)
-
 
 -- moving
 getLocation :: Location -> String -> Maybe (Maybe Location)
@@ -429,6 +425,11 @@ findLocationByID id (location:locations) =
     else
         findLocationByID id locations
 
+removeLocationByID :: Integer -> [Location] -> [Location]
+removeLocationByID _ [] = []
+removeLocationByID id (location:locations) | id == (locationID location) = removeLocationByID id locations
+                                            | otherwise = location : removeLocationByID id locations
+
 getNameLocation :: Location -> GameState -> String
 getNameLocation location state | not (elem id (discoveredLocationsID state)) = "undiscovered"
                                | otherwise = locationName location
@@ -461,6 +462,7 @@ lookAround state = state{output=desc}
         
         desc = descN ++ descE ++ descS ++ descW
 
+-- interacting with NPCs
 exchangeInList :: Item -> [Exchange] -> Maybe Exchange
 exchangeInList item [] = Nothing
 exchangeInList item (exchange:exchanges) = do
@@ -527,21 +529,12 @@ doExchange exchange state = state{output=desc++"\nYou got "++(itemName gift),
         gift = offeredItem exchange
         inventory = removeItem (neededItem exchange) (playerItems state) 
 
-dropItem :: String -> GameState -> GameState
-dropItem itName state = tryDrop item state
-    where
-        item = itemInList itName (playerItems state)
-
-        tryDrop :: Maybe Item -> GameState -> GameState
-        tryDrop item state = 
-            case item of
-                Nothing -> printMessage ("You don't have "++itName) state
-                Just item -> state{output="You dropped "++itName, 
-                                    playerItems=removeItem item (playerItems state),
-                                    currentLocation=(currentLocation state){locationItems=item:(locationItems (currentLocation state))}
-                                    }
-
 -- interact with items
+showInventory :: GameState -> GameState
+showInventory state = printMessage (descItems) state
+    where
+        descItems = join (playerItems state)
+
 doExamination :: String -> GameState -> GameState
 doExamination name state = 
     case npc of
@@ -553,7 +546,6 @@ doExamination name state =
     where
         npc = npcInList name (locationNPCs (currentLocation state))
         item = itemInList name ((locationItems (currentLocation state))++(playerItems state))
-
 
 examine :: Item -> GameState -> GameState
 examine item state = printMessage (message item) state
@@ -654,14 +646,22 @@ pickUp itemName state = tryPut item state
                        else 
                             printMessage "You can't do this"
 
+dropItem :: String -> GameState -> GameState
+dropItem itName state = tryDrop item state
+    where
+        item = itemInList itName (playerItems state)
+
+        tryDrop :: Maybe Item -> GameState -> GameState
+        tryDrop item state = 
+            case item of
+                Nothing -> printMessage ("You don't have "++itName) state
+                Just item -> state{output="You dropped "++itName, 
+                                    playerItems=removeItem item (playerItems state),
+                                    currentLocation=(currentLocation state){locationItems=item:(locationItems (currentLocation state))}
+                                    }
+
 removeItem :: Item -> [Item] -> [Item]
 removeItem item list = List.delete item list
-
-removeLocationByID :: Integer -> [Location] -> [Location]
-removeLocationByID _ [] = []
-removeLocationByID id (location:locations) | id == (locationID location) = removeLocationByID id locations
-                                            | otherwise = location : removeLocationByID id locations
-
 
 putInventory :: Item -> GameState -> GameState
 putInventory item state = state{currentLocation=location{locationItems=items}, 
@@ -672,38 +672,20 @@ putInventory item state = state{currentLocation=location{locationItems=items},
         location = currentLocation state
         items = removeItem item (locationItems location)
 
--- commands
-readCommand :: IO String
-readCommand = do
-    putStr "> "
-    xs <- getLine
-    return xs
-
-showInstructions :: GameState -> GameState
-showInstructions state = state{output=instructions}
-    where
-        instructions = List.intercalate "\n" instructionsText
-
-quit :: GameState -> GameState
-quit state = state{gameOver=True, output="Game quitted"}
-
+-- leaving an island
 atOcean :: GameState -> Bool
 atOcean state = elem (locationID (currentLocation state)) [19, 26, 32]
-
 
 hasNotes :: GameState -> Bool
 hasNotes state =
     elem note1 (playerItems state) && elem note2 (playerItems state) && elem note3 (playerItems state) &&
     elem note4 (playerItems state) && elem note5 (playerItems state)
 
-
 hasRaft :: GameState -> Bool
 hasRaft state = elem raft (playerItems state)
 
-
 hasPeople :: GameState -> Bool
 hasPeople state = elem people (playerItems state)
-
 
 leave :: GameState -> GameState            
 leave state = 
@@ -720,6 +702,21 @@ leave state =
         printMessage "You aren't at the ocean" state
     else 
         printMessage "You can't swim across the ocean. You need boat." state
+
+-- commands
+readCommand :: IO String
+readCommand = do
+    putStr "> "
+    xs <- getLine
+    return xs
+
+showInstructions :: GameState -> GameState
+showInstructions state = state{output=instructions}
+    where
+        instructions = List.intercalate "\n" instructionsText
+
+quit :: GameState -> GameState
+quit state = state{gameOver=True, output="Game quitted"}
 
 tryCommandZero :: (GameState -> GameState) -> String -> (GameState -> GameState)
 tryCommandZero command input = 
@@ -774,7 +771,7 @@ parseCommand input =
         \state -> state{output="Unrecognized command"}
 
 startingState :: IO GameState
-startingState = return (GameState fields2 False "" [phone] recipes [] [])
+startingState = return (look (GameState fields2 False "" [phone] recipes [] []))
     where
         recipes = [recipeBanana, recipeWood, recipeMast, recipeBrushwood1, recipeBrushwood2, recipeTorch1,
                     recipeTorch2, recipeFlamingTorch1, recipeFlamingTorch2, recipeRawIron, recipeFishingRod,

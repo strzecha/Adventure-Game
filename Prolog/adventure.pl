@@ -539,7 +539,8 @@ instructions :-
         write('look_around.             -- to see where you can go.'), nl,
         write('talk(NPC).               -- to talk with NPC.'), nl,
         write('give(Object, NPC).       -- to give an object to NPC.'), nl,
-        write('instructions.            -- to see this message again.'), nl,
+        write('instructions.            -- to see these instructions.'), nl,
+        write('leave.                   -- to leave an island.'), nl,
         write('halt.                    -- to end the game and quit.'), nl,
         nl.
 
@@ -571,10 +572,10 @@ describe(ancient_ruins) :- write('You are in a stone crypt. You can see strange 
 describe(volcano_peak) :- write('You reached the top. But it is not the top of the mountain. This is the top of the volcano!'), nl.
 describe(mountain_path1) :- write('You are getting closer to the top of the mountain. It''s getting hot...'), nl.
 describe(mountain_path2) :- write('You start climbing the mountain path.'), nl.
-describe(cave) :- write('You have entered a dark cave. You are clearly not alone here ...'), nl.
-describe(ocean1) :- write('You are at the ocean. You see another island in the distance ...'), nl.
-describe(ocean2) :- write('You are at the ocean. You see another island in the distance ...'), nl.
-describe(ocean3) :- write('You are at the ocean. You see another island in the distance ...'), nl.
+describe(cave) :- write('You have entered a dark cave. You are clearly not alone here...'), nl.
+describe(ocean1) :- write('You are at the ocean. You see another island in the distance...'), nl.
+describe(ocean2) :- write('You are at the ocean. You see another island in the distance...'), nl.
+describe(ocean3) :- write('You are at the ocean. You see another island in the distance...'), nl.
 describe(beach1) :- write('You are on a sandy beach.'), nl.
 describe(beach2) :- write('You are on a sandy beach.'), nl.
 describe(beach3) :- write('You are on a sandy beach.'), nl.
@@ -632,21 +633,23 @@ describe(ancient_guard) :- write('The statue shows a knight in full armor. Howev
 describe(monkey) :- write('It''s definitely a bad monkey. Why? Interestingly, instead of on the liana, the monkey hangs on a fairly solid rope.'), nl. 
 
 /* These rules describe the vaiours exchanges */
-describe(phone, native) :- write('Whoa! Shiny! Interesting. Take my ax.'), nl.
-describe(rose, native) :- write('Beautiful! Great idea! Thank you. Take this map. Thanks to it you will not get lost.'), nl.
-describe(banana, monkey) :- write('This monkey was obviously just hungry. Monkey took the fruit and walked away.'),
-                                write(' You can safely take the rope it was hanging on.'), nl.
-describe(dandelion, old_native) :- write('Thank you friend. An ordinary flower, and so pleasing to the eye.'),
-                                write(' It''s not much, but that''s all I can give you.'), nl.
-describe(meat, old_native) :- write('Delicious! Thank you! In return, I can give you this fruit that they keep feeding me.'), nl.
-describe(sword, ancient_guard) :- write('Yes! Now I feel like I can go in peace! So that''s what I missed!'),
-                                write(' Thank you! Please take this stone. The ghosts told me to keep an eye on him. Goodbye...'), nl.
+describeExchange(phone, native) :- write('Whoa! Shiny! Interesting. Take my ax.'), nl.
+describeExchange(rose, native) :- write('Beautiful! Great idea! Thank you. Take this map. Thanks to it you will not get lost.'), nl.
+describeExchange(banana, monkey) :- write('This monkey was obviously just hungry. Monkey took the fruit and walked away.'),
+                                        write(' You can safely take the rope it was hanging on.'), nl.
+describeExchange(dandelion, old_native) :- write('Thank you friend. An ordinary flower, and so pleasing to the eye.'),
+                                        write(' It''s not much, but that''s all I can give you.'), nl.
+describeExchange(meat, old_native) :- write('Delicious! Thank you! In return, I can give you this fruit that they keep feeding me.'), nl.
+describeExchange(sword, ancient_guard) :- write('Yes! Now I feel like I can go in peace! So that''s what I missed!'),
+                                        write(' Thank you! Please take this stone. The ghosts told me to keep an eye on him. Goodbye...'), nl.
+describeExchange(raw_iron, blacksmith) :- write('Looks like high quality ore. I''m about to forge a decent sword out of it.'), nl.
+describeExchange(fish, blacksmith) :- write('It looks delicious! Thank you! Take my pickaxe and mine some ore.'), nl.
 
 /* These rules describe the dialogs with NPCs */
 
 speak(native) :- write('Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island.'),
                 write(' I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful.'),
-                write(' You can get the meat from the cellar. By the way ... I would like to give my chosen one a little thing, but I have no idea.'),
+                write(' You can get the meat from the cellar. By the way... I would like to give my chosen one a little thing, but I have no idea.'),
                 write(' Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map.'), 
                 write(' Maybe it will be useful to you. I can also exchange my ax for some interesting item.'), nl.
 speak(old_native) :- write('Hello friend. I am m''Ilio.'), 
