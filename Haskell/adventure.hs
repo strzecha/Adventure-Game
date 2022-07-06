@@ -6,7 +6,8 @@ data GameState = GameState
     , output                :: String
     , playerItems           :: [Item]
     , recipes               :: [Recipe]
-    , locationsDiscovered   :: [Integer]
+    , discoveredLocationsID :: [Integer]
+    , visitedLocations   :: [Location]
     }
 
 data Location = Location
@@ -391,13 +392,22 @@ canMove location direction = do
         Just location -> return True
 
 moveTo :: Location -> GameState -> GameState
-moveTo location state = look state{currentLocation=location, output="",
-                            locationsDiscovered=newIDs}
+moveTo location state = look state{currentLocation=newLocation, output="",
+                            discoveredLocationsID=newIDs, visitedLocations=newLocations}
     where
         id = locationID location
-        locationsID = locationsDiscovered state
+        locationsID = discoveredLocationsID state
+        locations = visitedLocations state
+
+        oldLocation = currentLocation state
+        oldID = locationID oldLocation
+        newLocation = 
+            case (findLocationByID id locations) of
+                Nothing -> location
+                Just loc -> loc
+        newLocations = oldLocation:(removeLocationByID (locationID oldLocation) locations)
         newIDs = 
-            if elem aMap (playerItems state) then
+            if elem aMap (playerItems state) && not (elem id locationsID) then
                 id:locationsID
             else
                 locationsID
@@ -411,8 +421,16 @@ move direction state = go (nextLoc) state
             Nothing -> printMessage "You can't go that way"
             Just location -> moveTo location
 
+findLocationByID :: Integer -> [Location] -> Maybe Location
+findLocationByID id [] = Nothing
+findLocationByID id (location:locations) =
+    if locationID location == id then
+        Just location
+    else
+        findLocationByID id locations
+
 getNameLocation :: Location -> GameState -> String
-getNameLocation location state | not (elem id (locationsDiscovered state)) = "undiscovered"
+getNameLocation location state | not (elem id (discoveredLocationsID state)) = "undiscovered"
                                | otherwise = locationName location
     where
         id = locationID location
@@ -639,6 +657,11 @@ pickUp itemName state = tryPut item state
 removeItem :: Item -> [Item] -> [Item]
 removeItem item list = List.delete item list
 
+removeLocationByID :: Integer -> [Location] -> [Location]
+removeLocationByID _ [] = []
+removeLocationByID id (location:locations) | id == (locationID location) = removeLocationByID id locations
+                                            | otherwise = location : removeLocationByID id locations
+
 
 putInventory :: Item -> GameState -> GameState
 putInventory item state = state{currentLocation=location{locationItems=items}, 
@@ -751,7 +774,7 @@ parseCommand input =
         \state -> state{output="Unrecognized command"}
 
 startingState :: IO GameState
-startingState = return (GameState fields2 False "" [phone] recipes [0])
+startingState = return (GameState fields2 False "" [phone] recipes [] [])
     where
         recipes = [recipeBanana, recipeWood, recipeMast, recipeBrushwood1, recipeBrushwood2, recipeTorch1,
                     recipeTorch2, recipeFlamingTorch1, recipeFlamingTorch2, recipeRawIron, recipeFishingRod,
