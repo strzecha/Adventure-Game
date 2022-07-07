@@ -651,7 +651,7 @@ speak(native) :- write('Hello Stranger. You seem like a good man. I have a reque
                 write(' I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful.'),
                 write(' You can get the meat from the cellar. By the way... I would like to give my chosen one a little thing, but I have no idea.'),
                 write(' Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map.'), 
-                write(' Maybe it will be useful to you. I can also exchange my ax for some interesting item.'), nl.
+                write(' Maybe it will be useful to you. I can also exchange my ax for some interesting object.'), nl.
 speak(old_native) :- write('Hello friend. I am m''Ilio.'), 
                 write(' I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders.'),
                 write(' I would like to leave this cave, but I am afraid of the reaction of the other inhabitants.'),
