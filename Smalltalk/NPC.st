@@ -1,25 +1,24 @@
 Object subclass: Npc [
-    |npcName npcDescrption speakDialogue npcGameObject npcNeedsGameObject|
+    | npcName npcDescription speakDialogue exchanges |
 
-    Npc class >> newNpc: name desc: description dialogue: speak npcIt: it needsIt: needit [
+    Npc class >> newNpc: name desc: description dialogue: speak exchange: exs [
           | n |
           n := super new. 
-          n initNpc: name desc: description dialogue: speak npcIt: it needsIt: needit.
+          n initNpc: name desc: description dialogue: speak exchange: exs.
           ^n
     ]
 
-    initNpc: name desc: description dialogue: speak npcIt: it needsIt: needit [
+    initNpc: name desc: description dialogue: speak exchange: exs [
         npcName := name.
-        npcDescrption := description.
+        npcDescription := description.
         speakDialogue := speak.
-        npcGameObject := it.
-        npcNeedsGameObject := needit.
+        exchanges := exs.
     ]
 
     printOn: stream [
         super printOn: stream.
         npcName printOn: stream.
-        npcDescrption printOn: stream.
+        npcDescription printOn: stream.
     ]
 
     getName [
@@ -30,15 +29,7 @@ Object subclass: Npc [
         Transcript show: speakDialogue; cr.
     ]
 
-    getNeedGameObject [
-        ^npcNeedsGameObject
-    ]
-
-    getGameObject [
-        ^npcGameObject
-    ]
-
-    setGameObject: objectName [
-       npcGameObject := objectName.
+    getExchanges [
+        ^exchanges
     ]
 ]

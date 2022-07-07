@@ -37,7 +37,7 @@ Object subclass: Game [
 
     init [
         |phone pen thing sign ax sword rope someplace jungle1 jungle2 jungle3 jungle4 jungle5 jungle6 jungle7 guard eagle native
-         jungle1GameObjects jungle1NPCS recipeThing recipeWood flamingTorch ocean1 raft map|
+         jungle1GameObjects jungle1NPCS recipeThing recipeWood flamingTorch ocean1 raft map exchangeAx |
          
         phone := GameObject newGameObject: 'phone' desc: 'Glowing' pick: true use: false.
         pen := GameObject newGameObject: 'pen' desc: 'Shiny' pick: true use: false.
@@ -53,8 +53,10 @@ Object subclass: Game [
         recipeThing := Recipe newRecipe: phone gameObject2: pen res: thing.
         recipeWood := Recipe newRecipe: ax gameObject2: sign res: thing.
 
-         native := Npc newNpc: 'Native' desc: 'You see a native, whose face is obscured by darkness. Try interacting with him, if you''re brave enough.' dialogue: 'Hey you, are you looking for an ax? I will give it to you for something that will entertain my children.' npcIt: ax needsIt: phone.
-         guard := Npc newNpc: 'Guard' desc: 'It looks like someone is guarding the ruins. You should try talking to him, maybe he''ll let you by easily.' dialogue: 'You really thought I would let you in? You have no chance if you''re unarmed.' npcIt: sword needsIt: thing.
+        exchangeAx := Exchange newExchange: phone offerObject: ax descr: 'Prosz'.
+
+        native := Npc newNpc: 'Native' desc: 'You see a native, whose face is obscured by darkness. Try interacting with him, if you''re brave enough.' dialogue: 'Hey you, are you looking for an ax? I will give it to you for something that will entertain my children.' exchange: {exchangeAx}.
+        guard := Npc newNpc: 'Guard' desc: 'It looks like someone is guarding the ruins. You should try talking to him, maybe he''ll let you by easily.' dialogue: 'You really thought I would let you in? You have no chance if you''re unarmed.' exchange: {}.
 
         ocean1 := Location newLocation: 7 newName: 'Ocean' desc: 'You are at the ocean' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
         jungle2 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
@@ -187,10 +189,8 @@ Object subclass: Game [
                     Transcript show: 'undiscovered'; cr.
                ]
           ].
-     ]
-
+    ]
     
-
     updateLocation: locationIndex [
         | newLocation |
         newLocation := self findLocationByIndex: locationIndex.
@@ -320,8 +320,15 @@ Object subclass: Game [
         ^true.
     ]
 
+    findExchangeByObject: needObject and: exchanges [
+        exchanges do: [ :exchange | exchange getNeededObject = needObject ifTrue:[
+            ^exchange.
+        ]].
+        ^nil.
+    ]
+
     giveNPC: objectName and: personName [
-        | npcs i n newGameObject done |
+        | npcs i n newGameObject exchange done |
         done := false.
         npcs := currentLocation getNpcs.
         n := self findByName: personName and: npcs.
@@ -341,15 +348,17 @@ Object subclass: Game [
             ^false.
         ].
 
-        i = n getNeedGameObject
-        ifFalse: [
+        exchange := self findExchangeByObject: i and: n getExchanges.
+
+        exchange = nil
+        ifTrue: [
             Transcript show: 'He doesn''t want this'; cr.
             ^false.
         ].
 
-        newGameObject := n getGameObject.
-        n setGameObject: i.
+        newGameObject := exchange getOfferedObject.
         playerObjects add: newGameObject.
+        Transcript show: exchange getDescription; cr.
         Transcript show: 'You got '.
         Transcript show: newGameObject getName; cr.
         playerObjects remove: i.
@@ -538,5 +547,6 @@ FileStream fileIn: 'object.st'.
 FileStream fileIn: 'location.st'.
 FileStream fileIn: 'NPC.st'.
 FileStream fileIn: 'recipe.st'.
+FileStream fileIn: 'exchange.st'.
 
 Game new run.

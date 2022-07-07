@@ -1,52 +1,28 @@
-Object subclass: Npc [
-    |npcName npcDescrption speakDialogue talkable npcGameObject npcNeedsGameObject|
+Object subclass: Exchange [
+    | neededObject offeredObject description |
 
-    Npc class >> newNpc: name desc: description dialogue: speak isTalkable: talk npcIt: it needsIt: needit [
-          | n |
-          n := super new. 
-          n initNpc: name desc: description dialogue: speak isTalkable: talk npcIt: it needsIt: needit.
-          ^n
+    Exchange class >> newExchange: need offerObject: offer descr: d [
+          | ex |
+          ex := super new. 
+          ex initExchange: need offerObject: offer descr: d.
+          ^ex
     ]
 
-    initNpc: name desc: description dialogue: speak isTalkable: talk npcIt: it needsIt: needit [
-        npcName:=name.
-        npcDescrption:=description.
-        speakDialogue:=speak.
-        talkable:=talk.
-        npcGameObject:=it.
-        npcNeedsGameObject:=needit.
+    initExchange: need offerObject: offer descr: d [
+        neededObject := need.
+        offeredObject := offer.
+        description := d.
     ]
 
-    printOn: stream [
-        super printOn: stream.
-        npcName printOn: stream.
-        npcDescrption printOn: stream.
+    getOfferedObject [
+        ^offeredObject
     ]
 
-    getName [
-        ^npcName
+    getNeededObject [
+        ^neededObject
     ]
 
-    talk [
-        talkable 
-        ifTrue: [
-            Transcript show: speakDialogue; cr
-            ]
-        ifFalse: [ 
-            Transcript show: npcName.
-            Transcript show: ' is not talkable.'; cr.
-            ].
-    ]
-
-    getNeedGameObject [
-        ^npcNeedsGameObject
-    ]
-
-    getGameObject [
-        ^npcGameObject
-    ]
-
-    setGameObject: objectName [
-       npcGameObject := objectName.
+    getDescription [
+       ^description
     ]
 ]
