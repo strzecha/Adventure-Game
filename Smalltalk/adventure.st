@@ -325,7 +325,7 @@ Object subclass: Game [
     findRecipe: object1 and: object2 [
         recipes do: [ :recipe | 
         ((recipe getObject1 = object1 & recipe getObject2 = object2) |
-        (recipe getObject1 = object2 & recipe getObject2 = object2)) ifTrue: [
+        (recipe getObject1 = object2 & recipe getObject2 = object1)) ifTrue: [
             ^recipe.
         ]].
         ^nil.
