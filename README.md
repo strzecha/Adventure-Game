@@ -1,4 +1,5 @@
 # Adventure-Game
 
 ## Map + Recipes
-![map](https://user-images.githubusercontent.com/75899133/177736885-a638e208-661a-4f32-8e55-6e5fcf3a5aa6.png)
+![map](https://user-images.githubusercontent.com/75899133/177806217-29c1ac00-2f82-45ba-9a10-1065f5db7692.png)
+
