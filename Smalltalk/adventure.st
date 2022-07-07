@@ -102,7 +102,8 @@ Object subclass: Game [
 
     printNames: objects [
         objects do: [ :object | Transcript show: object getName.
-                                Transcript show: ', '. ]
+                                Transcript show: ', '. ].
+        Transcript cr.
     ]
 
     printInventory[
@@ -116,8 +117,7 @@ Object subclass: Game [
         ].
         Transcript show: location getDescription; cr.
         Transcript show: 'There are: '.
-        self printNames: location getObjects.
-        self printNames: location getNpcs.
+        self printNames: location getObjects, location getNpcs.
         ^true.
     ]
 
@@ -461,7 +461,13 @@ Object subclass: Game [
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
                     self printLocation: currentLocation.
-                    Transcript show: ''; cr.
+                ]
+            ].
+
+            cmd = 'look_around' ifTrue: [
+                isUnknown := false.
+                (self checkNumOfArgs: subs and: 1)
+                ifTrue: [
                     self lookAround: currentLocation.
                 ]
             ].
