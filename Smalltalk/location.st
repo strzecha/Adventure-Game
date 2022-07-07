@@ -78,6 +78,10 @@ Object subclass: Location [
           locationObjects := locationObjects copyWithout: object.
      ]
 
+     addObject: object [
+        locationObjects := locationObjects, {object}.
+     ]
+
      isDark [
           ^locationDark
      ]

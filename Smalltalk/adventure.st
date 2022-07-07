@@ -234,6 +234,23 @@ Object subclass: Game [
         
     ]
 
+    drop: objectName [
+        | object |
+        object := self findByName: objectName and: playerObjects.
+        object = nil
+        ifTrue: [
+            Transcript show: 'You don''t have '.
+            Transcript show: objectName; cr.
+            ^false.
+        ].
+
+        playerObjects := playerObjects copyWithout: object.
+        currentLocation addObject: object.
+        Transcript show: 'You dropped '.
+        Transcript show: objectName; cr.
+        ^true.  
+    ]
+
     findRecipe: object1 and: object2 [
         recipes do: [ :recipe | 
         ((recipe getObject1 = object1 & recipe getObject2 = object2) |
@@ -492,6 +509,16 @@ Object subclass: Game [
                 ifTrue: [
                     arg:= subs at:2.
                     self pick: arg.
+                ]
+            ].
+
+            cmd = 'drop' ifTrue: [
+                |arg|
+                isUnknown := false.
+                (self checkNumOfArgs: subs and: 2)
+                ifTrue: [
+                    arg:= subs at:2.
+                    self drop: arg.
                 ]
             ].
 
