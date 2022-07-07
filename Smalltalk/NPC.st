@@ -25,6 +25,10 @@ Object subclass: Npc [
         ^npcName
     ]
 
+    getDescription [
+        ^npcDescription
+    ]
+
     talk [
         Transcript show: speakDialogue; cr.
     ]

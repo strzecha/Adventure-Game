@@ -124,8 +124,10 @@ Object subclass: Game [
     ]
 
     examine: objectName [
-        playerObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
-        currentLocation getObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
+        (playerObjects, currentLocation getObjects, currentLocation getNpcs) do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
+        Transcript show: 'There is no '.
+        Transcript show: objectName; cr.
+        ^false.
     ]
 
     findByName: name and: anArray [
