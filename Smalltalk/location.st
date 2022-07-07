@@ -20,7 +20,8 @@ Object subclass: Location [
           west := lWest.
           south := lSouth.
           east := lEast.
-          locationObjects := objects.
+          locationObjects := OrderedCollection new.
+          objects do: [ :object | locationObjects add: object ].
           locationNpcs := npcs.
           locationDark := dark.
           locationDiscovered := false.
@@ -70,16 +71,12 @@ Object subclass: Location [
         ^locationNpcs
      ]
 
-     removeGameObjectByName: name [
-        locationObjects remove: name.
-     ]
-
-     removeGameObject: object [
-          locationObjects := locationObjects copyWithout: object.
+     removeObject: object [
+        locationObjects remove: object.
      ]
 
      addObject: object [
-        locationObjects := locationObjects, {object}.
+        locationObjects add: object.
      ]
 
      isDark [

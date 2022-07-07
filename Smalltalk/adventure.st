@@ -73,6 +73,7 @@ Object subclass: Game [
         playerObjects := OrderedCollection new.
         playerObjects add: phone.
         playerObjects add: pen.
+        playerObjects add: pen.
         playerObjects add: raft.
 
         recipes := {recipeThing. recipeWood}.
@@ -94,17 +95,18 @@ Object subclass: Game [
     ]
 
     readCommand [
+        Transcript cr.
         Transcript show: '> '.
-        ^ FileStream stdin nextLine
+        ^FileStream stdin nextLine
     ]
 
     printNames: objects [
-        objects do: [ :object | Transcript show: object getName; cr ]
+        objects do: [ :object | Transcript show: object getName.
+                                Transcript show: ', '. ]
     ]
 
-    printInventory: anInventory [
-        Transcript show: 'Your inventory:'; cr.
-        self printNames: anInventory.
+    printInventory[
+        self printNames: playerObjects.
     ]
 
     printLocation: location [
@@ -113,20 +115,28 @@ Object subclass: Game [
             ^false.
         ].
         Transcript show: location getDescription; cr.
-        Transcript show: 'You see:'; cr.
+        Transcript show: 'There are: '.
         self printNames: location getObjects.
         self printNames: location getNpcs.
         ^true.
     ]
 
     printGameObjectDescription: object [
+        object getDescription = ''
+        ifTrue: [
+            Transcript show: 'You don''t know anything about ', object getName; cr.
+            ^false.
+        ].
         Transcript show: object getDescription; cr.
+        ^true.
     ]
 
     examine: objectName [
-        (playerObjects, currentLocation getObjects, currentLocation getNpcs) do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
-        Transcript show: 'There is no '.
-        Transcript show: objectName; cr.
+        (playerObjects, currentLocation getObjects, currentLocation getNpcs) do: [:object | object getName = objectName ifTrue: [
+            self printGameObjectDescription: object. 
+            ^true
+        ]].
+        Transcript show: 'There is no ', objectName; cr.
         ^false.
     ]
 
@@ -140,6 +150,22 @@ Object subclass: Game [
         ^nil.
     ]
 
+    printDirection: direction and: char [
+        direction = nil
+        ifTrue: [
+            ^true.
+        ].
+        Transcript show: char, ' -> '.
+        direction isDiscovered
+        ifTrue: [
+            Transcript show: direction getName; cr.
+        ]
+        ifFalse: [
+            Transcript show: 'undiscovered'; cr.
+        ].
+        ^true.
+    ]
+
     lookAround: location[
         | north south west east |
         north := self findLocationByIndex: location getN.
@@ -147,50 +173,10 @@ Object subclass: Game [
         east := self findLocationByIndex: location getE.
         west := self findLocationByIndex: location getW.
 
-          north = nil
-          ifFalse: [
-               Transcript show: 'north -> '.
-               north isDiscovered
-               ifTrue: [
-                    Transcript show: north getName; cr.
-               ]
-               ifFalse: [
-                    Transcript show: 'undiscovered'; cr.
-               ]
-          ].
-          east = nil
-          ifFalse: [
-               Transcript show: 'east -> '.
-               east isDiscovered
-               ifTrue: [
-                    Transcript show: east getName; cr.
-               ]
-               ifFalse: [
-                    Transcript show: 'undiscovered'; cr.
-               ]
-          ].
-          west = nil
-          ifFalse: [
-               Transcript show: 'west -> '.
-               west isDiscovered
-               ifTrue: [
-                    Transcript show: west getName; cr.
-               ]
-               ifFalse: [
-                    Transcript show: 'undiscovered'; cr.
-               ]
-          ].
-          south = nil
-          ifFalse: [
-               Transcript show: 'south -> '.
-               south isDiscovered
-               ifTrue: [
-                    Transcript show: south getName; cr.
-               ]
-               ifFalse: [
-                    Transcript show: 'undiscovered'; cr.
-               ]
-          ].
+        self printDirection: north and: 'n'.
+        self printDirection: east and: 'e'.
+        self printDirection: west and: 'w'.
+        self printDirection: south and: 's'.
     ]
     
     updateLocation: locationIndex [
@@ -198,7 +184,7 @@ Object subclass: Game [
         newLocation := self findLocationByIndex: locationIndex.
         newLocation = nil
         ifTrue: [
-            Transcript show: 'You cannot go that way'; cr.
+            Transcript show: 'You can''t go that way'; cr.
             ^false.
         ].
 
@@ -217,19 +203,18 @@ Object subclass: Game [
         i := self findByName: objectName and: its.
         i = nil
         ifTrue: [
-            Transcript show: 'There is no  '.
-            Transcript show: objectName; cr.
+            Transcript show: 'There is no ', objectName; cr.
             ^false.
         ].
 
         i isPickable = true 
         ifFalse: [
-            Transcript show: 'You cannot pick '.
-            Transcript show: objectName; cr.
+            Transcript show: 'You can''t do this.'; cr.
             ^false.
         ].
         playerObjects add: i.
-        currentLocation removeGameObject: i.
+        currentLocation removeObject: i.
+        Transcript show: 'You picked up ', objectName; cr.
         ^true.
         
     ]
@@ -239,15 +224,13 @@ Object subclass: Game [
         object := self findByName: objectName and: playerObjects.
         object = nil
         ifTrue: [
-            Transcript show: 'You don''t have '.
-            Transcript show: objectName; cr.
+            Transcript show: 'You don''t have ', objectName; cr.
             ^false.
         ].
 
-        playerObjects := playerObjects copyWithout: object.
+        playerObjects remove: object.
         currentLocation addObject: object.
-        Transcript show: 'You dropped '.
-        Transcript show: objectName; cr.
+        Transcript show: 'You dropped ', objectName; cr.
         ^true.  
     ]
 
@@ -260,11 +243,10 @@ Object subclass: Game [
         ^nil.
     ]
 
-    isAvailable: name and: objects [
-        objects do: [ :object | object getName = name ifTrue: [
-            ^object.
-        ]].
-        ^nil.
+    isAvailable: name [
+        | object |
+        object := self findByName: name and: playerObjects, currentLocation getObjects.
+        ^object.
     ]
 
     useUp: object [
@@ -280,13 +262,13 @@ Object subclass: Game [
             objectInArray := self findByName: object getName and: currentLocation getObjects.
             objectInArray = nil
             ifFalse: [
-                currentLocation removeGameObject: object.
+                currentLocation removeObject: object.
                 ^true.
             ].
             ^false.
         ]
         ifFalse: [
-            playerObjects := playerObjects copyWithout: object.
+            playerObjects remove: object.
             ^true.
         ].
     ]
@@ -294,19 +276,17 @@ Object subclass: Game [
     use: objectName1 and: objectName2 [
         |object1 object2 recipe result objectLoc|
 
-        object1 := self isAvailable: objectName1 and: playerObjects, currentLocation getObjects.
+        object1 := self isAvailable: objectName1.
         object1 = nil
         ifTrue: [
-            Transcript show: 'You don''t have '.
-            Transcript show: objectName1; cr.
+            Transcript show: 'You don''t have ', objectName1; cr.
             ^false.
         ].
 
-        object2 := self isAvailable: objectName2 and: playerObjects, currentLocation getObjects.
+        object2 := self isAvailable: objectName2.
         object2 = nil
         ifTrue: [
-            Transcript show: 'You don''t have '.
-            Transcript show: objectName2; cr.
+            Transcript show: 'You don''t have ', objectName2; cr.
             ^false.
         ].
 
@@ -314,7 +294,7 @@ Object subclass: Game [
 
         recipe = nil 
         ifTrue: [
-            Transcript show: 'You cannot do that'; cr.
+            Transcript show: 'You can''t use it that way'; cr.
             ^false.
         ].
 
@@ -323,8 +303,7 @@ Object subclass: Game [
 
         playerObjects add: recipe getResult.
 
-        Transcript show: 'You got: '.
-        Transcript show: recipe getResult getName; cr.
+        Transcript show: 'You got ', recipe getResult getName; cr.
         ^true.
     ]
 
@@ -335,8 +314,7 @@ Object subclass: Game [
 
         n = nil
         ifTrue: [
-            Transcript show: 'There is no '.
-            Transcript show: personName; cr.
+            Transcript show: 'There is no ', personName; cr.
             ^false.
         ].
 
@@ -359,16 +337,14 @@ Object subclass: Game [
 
         n = nil
         ifTrue: [
-            Transcript show: 'There is no '.
-            Transcript show: personName; cr.
+            Transcript show: 'There is no ', personName; cr.
             ^false.
         ].
 
         i := self findByName: objectName and: playerObjects.
         i = nil
         ifTrue: [
-            Transcript show: 'You don''t have '.
-            Transcript show: objectName; cr.
+            Transcript show: 'You don''t have ', objectName; cr.
             ^false.
         ].
 
@@ -383,8 +359,7 @@ Object subclass: Game [
         newGameObject := exchange getOfferedObject.
         playerObjects add: newGameObject.
         Transcript show: exchange getDescription; cr.
-        Transcript show: 'You got '.
-        Transcript show: newGameObject getName; cr.
+        Transcript show: 'You got ', newGameObject getName; cr.
         playerObjects remove: i.
         ^true.
     ]
@@ -395,8 +370,7 @@ Object subclass: Game [
             ^true.
         ]
         ifFalse: [
-            Transcript show: 'Wrong number of arguments. Required: '.
-            Transcript show: num printString; cr.
+            Transcript show: 'Wrong number of arguments. Required: ', num printString; cr.
             ^false.
         ].
     ]
@@ -405,14 +379,14 @@ Object subclass: Game [
         | object |
         currentLocation getName = 'Ocean'
         ifFalse: [
-            Transcript show: 'You are not at the ocean'; cr.
+            Transcript show: 'You aren''t at the ocea'; cr.
             ^false.
         ].
 
         object := self findByName: 'raft' and: playerObjects.
         object = nil
         ifTrue: [
-            Transcript show: 'You need something to cross the ocean'; cr.
+            Transcript show: 'You can''t swim across the ocean. You need boat.'; cr.
             ^false.
         ].
 
@@ -478,7 +452,7 @@ Object subclass: Game [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
-                    self printInventory: playerObjects.
+                    self printInventory.
                 ]
             ].
 
