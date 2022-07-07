@@ -114,11 +114,11 @@ Object subclass: Game [
         exchangePickax := Exchange newExchange: fish offerObject: pickax desc: 'It looks delicious! Thank you! Take my pickaxe and mine some ore.'.
         exchangeSword := Exchange newExchange: rawIron offerObject: sword desc: 'Looks like high quality ore. I''m about to forge a decent sword out of it.'.
 
-        ancientGuard := Npc newNpc: 'ancient_guard' desc: 'The statue shows a knight in full armor. However, his hands are empty...' speech: 'Hello traveler. I used to be a ruthless knight but was cursed by the village shaman. Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior". I do not know what it means. Help me please and I will reward you generously.' exchange: {exchangeMysteriousStone.}.
-        monkey := Npc newNpc: 'monkey' desc: 'It''s definitely a bad monkey. Why? Interestingly, instead of on the liana, the monkey hangs on a fairly solid rope.' speech: 'U-u-aaaa! Buaaaaa!' exchange: {exchangeRope}.
-        oldNative := Npc newNpc: 'old_native' desc: '' speech: 'Hello friend. I am m''Ilio. I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders. I would like to leave this cave, but I am afraid of the reaction of the other inhabitants. However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time. I am also very hungry. My son brings me food sometimes, but it''s usually fruit or nuts. I want meat. Bring them to me and I will reward you.' exchange: {exchangeBanana. exchangeBucket}.
-        native := Npc newNpc: 'native' desc: '' speech: 'Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item.' exchange: {exchangeAx. exchangeMap}.
-        blacksmith := Npc newNpc: 'blacksmith' desc: '' speech: 'Hello traveler. I am a local blacksmith. I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources. I heard that there are still deposits of iron left in the cave in the north of the island. If you give me a fish, I will give you my pickaxe so that you can mine the ore.' exchange: {exchangePickax. exchangeSword}.
+        ancientGuard := NPC newNPC: 'ancient_guard' desc: 'The statue shows a knight in full armor. However, his hands are empty...' speech: 'Hello traveler. I used to be a ruthless knight but was cursed by the village shaman. Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior". I do not know what it means. Help me please and I will reward you generously.' exchange: {exchangeMysteriousStone.}.
+        monkey := NPC newNPC: 'monkey' desc: 'It''s definitely a bad monkey. Why? Interestingly, instead of on the liana, the monkey hangs on a fairly solid rope.' speech: 'U-u-aaaa! Buaaaaa!' exchange: {exchangeRope}.
+        oldNative := NPC newNPC: 'old_native' desc: '' speech: 'Hello friend. I am m''Ilio. I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders. I would like to leave this cave, but I am afraid of the reaction of the other inhabitants. However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time. I am also very hungry. My son brings me food sometimes, but it''s usually fruit or nuts. I want meat. Bring them to me and I will reward you.' exchange: {exchangeBanana. exchangeBucket}.
+        native := NPC newNPC: 'native' desc: '' speech: 'Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item.' exchange: {exchangeAx. exchangeMap}.
+        blacksmith := NPC newNPC: 'blacksmith' desc: '' speech: 'Hello traveler. I am a local blacksmith. I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources. I heard that there are still deposits of iron left in the cave in the north of the island. If you give me a fish, I will give you my pickaxe so that you can mine the ore.' exchange: {exchangePickax. exchangeSword}.
 
         recipeBanana := Recipe newRecipe: stone gameObject2: bananaTree res: banana.
         recipeWood := Recipe newRecipe: ax gameObject2: tree res: wood.
@@ -145,14 +145,14 @@ Object subclass: Game [
         recipeSword2 := Recipe newRecipe: hotSword gameObject2: pond res: sword.
         recipeHotSword := Recipe newRecipe: swordForm gameObject2: anvil res: hotSword.
 
-        ocean1 := Location newLocation: 7 newName: 'Ocean' desc: 'You are at the ocean' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle1 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle2 := Location newLocation: 3 newName: 'Jungle3' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        darkJungle1 := Location newLocation: 4 newName: 'Jungle4' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        darkJungle2 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        beach1 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        beach2 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {signpost.} locNpcs: {native} isDark: false.
-        fields2 := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {phone. map.} locNpcs: {native} isDark: false.
+        ocean1 := Location newLocation: 7 newName: 'Ocean' desc: 'You are at the ocean' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNPCs: {} isDark: false.
+        jungle1 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNPCs: {} isDark: false.
+        jungle2 := Location newLocation: 3 newName: 'Jungle3' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNPCs: {} isDark: false.
+        darkJungle1 := Location newLocation: 4 newName: 'Jungle4' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNPCs: {} isDark: false.
+        darkJungle2 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNPCs: {} isDark: false.
+        beach1 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNPCs: {} isDark: false.
+        beach2 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {signpost.} locNPCs: {native} isDark: false.
+        fields2 := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {phone. map.} locNPCs: {native} isDark: false.
         
         currentLocation := fields2.
 
@@ -203,7 +203,7 @@ Object subclass: Game [
         ].
         Transcript show: location getDescription; cr.
         Transcript show: 'There are: '.
-        self printNames: location getObjects, location getNpcs.
+        self printNames: location getObjects, location getNPCs.
         ^true.
     ]
 
@@ -218,21 +218,24 @@ Object subclass: Game [
     ]
 
     examine: objectName [
-        (playerObjects, currentLocation getObjects, currentLocation getNpcs) do: [:object | object getName = objectName ifTrue: [
-            self printGameObjectDescription: object. 
-            ^true
-        ]].
-        Transcript show: 'There is no ', objectName; cr.
-        ^false.
+        | object |
+        object := self findByName: objectName and: playerObjects, currentLocation getObjects, currentLocation getNPCs.
+        object = nil
+        ifTrue: [
+            Transcript show: 'There is no ', objectName; cr.
+            ^false.
+        ].
+        self printGameObjectDescription: object. 
+        ^true
     ]
 
     findByName: name and: anArray [
-        anArray do: [:object | object getName = name ifTrue: [ ^object ]].
+        anArray do: [ :object | object getName = name ifTrue: [ ^object ]].
         ^nil.
     ]
 
-    findLocationByIndex: index [
-        locations do: [:location | location getId = index ifTrue: [ ^location ]].
+    findLocationByID: index [
+        locations do: [ :location | location getId = index ifTrue: [ ^location ]].
         ^nil.
     ]
 
@@ -254,10 +257,10 @@ Object subclass: Game [
 
     lookAround: location[
         | north south west east |
-        north := self findLocationByIndex: location getN.
-        south := self findLocationByIndex: location getS.
-        east := self findLocationByIndex: location getE.
-        west := self findLocationByIndex: location getW.
+        north := self findLocationByID: location getN.
+        south := self findLocationByID: location getS.
+        east := self findLocationByID: location getE.
+        west := self findLocationByID: location getW.
 
         self printDirection: north and: 'n'.
         self printDirection: east and: 'e'.
@@ -267,7 +270,7 @@ Object subclass: Game [
     
     updateLocation: locationIndex [
         | newLocation |
-        newLocation := self findLocationByIndex: locationIndex.
+        newLocation := self findLocationByID: locationIndex.
         newLocation = nil
         ifTrue: [
             Transcript show: 'You can''t go that way'; cr.
@@ -284,22 +287,21 @@ Object subclass: Game [
     ]
 
     pick: objectName [
-        | its i |
-        its := currentLocation getObjects.
-        i := self findByName: objectName and: its.
-        i = nil
+        | object |
+        object := self findByName: objectName and: currentLocation getObjects.
+        object = nil
         ifTrue: [
             Transcript show: 'There is no ', objectName; cr.
             ^false.
         ].
 
-        i isPickable = true 
+        object isPickable = true 
         ifFalse: [
             Transcript show: 'You can''t do this.'; cr.
             ^false.
         ].
-        playerObjects add: i.
-        currentLocation removeObject: i.
+        playerObjects add: object.
+        currentLocation removeObject: object.
         Transcript show: 'You picked up ', objectName; cr.
         ^true.
         
@@ -323,7 +325,7 @@ Object subclass: Game [
     findRecipe: object1 and: object2 [
         recipes do: [ :recipe | 
         ((recipe getObject1 = object1 & recipe getObject2 = object2) |
-        (recipe getObject1 = object2 & recipe getObject1 = object2)) ifTrue: [
+        (recipe getObject1 = object2 & recipe getObject2 = object2)) ifTrue: [
             ^recipe.
         ]].
         ^nil.
@@ -360,7 +362,7 @@ Object subclass: Game [
     ]
 
     use: objectName1 and: objectName2 [
-        |object1 object2 recipe result objectLoc|
+        | object1 object2 recipe result |
 
         object1 := self isAvailable: objectName1.
         object1 = nil
@@ -393,18 +395,17 @@ Object subclass: Game [
         ^true.
     ]
 
-    talkNPC: personName [
-        |npcs n|
-        npcs := currentLocation getNpcs.
-        n := self findByName: personName and: npcs.
+    talkNPC: npcName [
+        | npc |
+        npc := self findByName: npcName and: currentLocation getNPCs.
 
-        n = nil
+        npc = nil
         ifTrue: [
-            Transcript show: 'There is no ', personName; cr.
+            Transcript show: 'There is no ', npcName; cr.
             ^false.
         ].
 
-        n talk.
+        npc talk.
         ^true.
     ]
 
@@ -415,26 +416,24 @@ Object subclass: Game [
         ^nil.
     ]
 
-    giveNPC: objectName and: personName [
-        | npcs i n newGameObject exchange done |
-        done := false.
-        npcs := currentLocation getNpcs.
-        n := self findByName: personName and: npcs.
+    giveNPC: objectName and: npcName [
+        | object npc newObject exchange |
+        npc := self findByName: npcName and: currentLocation getNPCs.
 
-        n = nil
+        npc = nil
         ifTrue: [
-            Transcript show: 'There is no ', personName; cr.
+            Transcript show: 'There is no ', npcName; cr.
             ^false.
         ].
 
-        i := self findByName: objectName and: playerObjects.
-        i = nil
+        object := self findByName: objectName and: playerObjects.
+        object = nil
         ifTrue: [
             Transcript show: 'You don''t have ', objectName; cr.
             ^false.
         ].
 
-        exchange := self findExchangeByObject: i and: n getExchanges.
+        exchange := self findExchangeByObject: object and: npc getExchanges.
 
         exchange = nil
         ifTrue: [
@@ -442,11 +441,11 @@ Object subclass: Game [
             ^false.
         ].
 
-        newGameObject := exchange getOfferedObject.
-        playerObjects add: newGameObject.
+        newObject := exchange getOfferedObject.
+        playerObjects add: newObject.
         Transcript show: exchange getDescription; cr.
-        Transcript show: 'You got ', newGameObject getName; cr.
-        playerObjects remove: i.
+        Transcript show: 'You got ', newObject getName; cr.
+        playerObjects remove: object.
         ^true.
     ]
 
@@ -497,7 +496,8 @@ Object subclass: Game [
             subs := input substrings.
             cmd := subs first.
 
-            cmd = 'instructions' ifTrue: [
+            cmd = 'instructions' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -505,28 +505,35 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'n' ifTrue: [
+            cmd = 'n' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
                     self updateLocation: currentLocation getN.
                 ]
             ].
-            cmd = 'e' ifTrue: [
+
+            cmd = 'e' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
                     self updateLocation: currentLocation getE.
                 ]
             ].
-            cmd = 's' ifTrue: [
+
+            cmd = 's' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
                     self updateLocation: currentLocation getS.
                 ]
             ].
-            cmd = 'w' ifTrue: [
+
+            cmd = 'w' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -534,7 +541,8 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'inventory' ifTrue: [
+            cmd = 'inventory' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -542,7 +550,8 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'look' ifTrue: [
+            cmd = 'look' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -550,7 +559,8 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'look_around' ifTrue: [
+            cmd = 'look_around' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -558,69 +568,76 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'examine' ifTrue: [
-                |arg|
+            cmd = 'examine' 
+            ifTrue: [
+                | objectName |
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 2)
                 ifTrue: [
-                    arg:= subs at:2.
-                    self examine: arg.
+                    objectName := subs at:2.
+                    self examine: objectName.
                 ]
             ].
 
-            cmd = 'take' ifTrue: [
-                |arg|
+            cmd = 'take' 
+            ifTrue: [
+                | objectName |
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 2)
                 ifTrue: [
-                    arg:= subs at:2.
-                    self pick: arg.
+                    objectName := subs at:2.
+                    self pick: objectName.
                 ]
             ].
 
-            cmd = 'drop' ifTrue: [
-                |arg|
+            cmd = 'drop' 
+            ifTrue: [
+                | objectName |
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 2)
                 ifTrue: [
-                    arg:= subs at:2.
-                    self drop: arg.
+                    objectName := subs at:2.
+                    self drop: objectName.
                 ]
             ].
 
-            cmd = 'use' ifTrue: [
-                |arg it1 it2|
+            cmd = 'use' 
+            ifTrue: [
+                | objectName1 objectName2 |
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 3)
                 ifTrue: [
-                    it1 := subs at: 2.
-                    it2 := subs at: 3.
-                    self use: it1 and: it2.
+                    objectName1 := subs at: 2.
+                    objectName2 := subs at: 3.
+                    self use: objectName1 and: objectName2.
                 ]
             ].
 
-            cmd = 'talk' ifTrue: [
-                | personName |
+            cmd = 'talk' 
+            ifTrue: [
+                | npcName |
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 2)
                 ifTrue: [
-                    personName := subs at:2.
-                    self talkNPC: personName.
+                    npcName := subs at:2.
+                    self talkNPC: npcName.
                 ]
             ].
 
-            cmd = 'give' ifTrue: [
-                | objectName personName |
+            cmd = 'give' 
+            ifTrue: [
+                | objectName npcName |
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 3)
                 ifTrue: [
                     objectName := subs at:2.
-                    personName := subs at:3.
-                    self giveNPC: objectName and: personName.
+                    npcName := subs at:3.
+                    self giveNPC: objectName and: npcName.
                 ]
             ].
 
-            cmd = 'leave' ifTrue: [
+            cmd = 'leave' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -628,7 +645,8 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'halt' ifTrue: [
+            cmd = 'halt' 
+            ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -636,8 +654,9 @@ Object subclass: Game [
                 ]
             ].
 
-            isUnknown ifTrue: [
-                self printLines: #('Unrecognized command.' '')
+            isUnknown 
+            ifTrue: [
+                Transcript show: 'Unrecognized command.'; cr.
             ]
         ]
     ]

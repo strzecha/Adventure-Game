@@ -1,15 +1,15 @@
 Object subclass: Location [
     | locationId locationName locationDescrption north south west east |
-    | locationObjects locationNpcs locationDark locationDiscovered |
+    | locationObjects locationNPCs locationDark locationDiscovered |
 
-    Location class >> newLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
+    Location class >> newLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNPCs: npcs isDark: dark [
         | l |
         l := super new. 
-        l initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark.
+        l initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNPCs: npcs isDark: dark.
         ^l
     ]
 
-    initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
+    initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNPCs: npcs isDark: dark [
         locationId := id.
         locationName := name.
         locationDescrption := description.
@@ -19,7 +19,7 @@ Object subclass: Location [
         east := lEast.
         locationObjects := OrderedCollection new.
         objects do: [ :object | locationObjects add: object ].
-        locationNpcs := npcs.
+        locationNPCs := npcs.
         locationDark := dark.
         locationDiscovered := false.
     ]
@@ -29,7 +29,7 @@ Object subclass: Location [
         locationName printOn: stream.
         locationDescrption printOn: stream.
         locationObjects printOn: stream.
-        locationNpcs printOn: stream.
+        locationNPCs printOn: stream.
     ]
 
     getN [
@@ -64,8 +64,8 @@ Object subclass: Location [
         ^locationDescrption
     ]
 
-    getNpcs [
-    ^locationNpcs
+    getNPCs [
+    ^locationNPCs
     ]
 
     removeObject: object [

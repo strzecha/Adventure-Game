@@ -1,14 +1,14 @@
-Object subclass: Npc [
+Object subclass: NPC [
     | npcName npcDescription npcSpeech exchanges |
 
-    Npc class >> newNpc: name desc: description speech: speak exchange: exs [
+    NPC class >> newNPC: name desc: description speech: speak exchange: exs [
           | n |
           n := super new. 
-          n initNpc: name desc: description speech: speak exchange: exs.
+          n initNPC: name desc: description speech: speak exchange: exs.
           ^n
     ]
 
-    initNpc: name desc: description speech: speak exchange: exs [
+    initNPC: name desc: description speech: speak exchange: exs [
         npcName := name.
         npcDescription := description.
         npcSpeech := speak.
