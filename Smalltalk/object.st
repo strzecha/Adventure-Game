@@ -1,5 +1,5 @@
 Object subclass: GameObject [
-     |objectName objectDescription objectPickable objectReusable|
+     | objectName objectDescription objectPickable objectReusable |
      
      GameObject class >> newGameObject: name desc: description pick: pickable use: usable [
           | i |

@@ -1,10 +1,25 @@
 Object subclass: Game [
-     | isGameOver |
-     | currentLocation |
-     | playerObjects |
-     | recipes |
-     | locations |
+    | isGameOver currentLocation playerObjects recipes locations |
 
+    | meadow1 forest1 darkJungle1 tunnelEntrance ancientRuin volcanoPeak |
+    | forest2 meadow2 jungle1 tunnel1 tunnel2 mountainPath1 |
+    | fields1 planeWreck jungle2 darkJungle2 cave mountainPath2 |
+    | ocean1 beach1 fields2 crossroads path1 path3 mountainPath2 |
+    | ocean2 beach2 house1 village1 wellSquare village2 |
+    | ocean3 beach3 pantry house2 oldHouse basement |
+
+    | totem tree stick bananaTree lavaSource rose dandelion bush note1 note2 note3 note4 note5 ironOre notebook |
+    | palm signpost stone well string wreck meat cloth sheets blastFurnace anvil banana wood mast brushwood torch |
+    | flamingTorch rawIron fishingRod liquidIron swordForm fish waterBucket hardwood deck sail raft people sword hotSword |
+    | rope ax map mysteriousStone bucket pickax phone pond |
+    
+    | ancientGuard monkey oldNative native blacksmith |
+
+    | recipeBanana recipeWood recipeMast recipeBrushwood1 recipeBrushwood2 recipeTorch1 recipeTorch2 recipeFlamingTorch1 |
+    | recipeRawIron recipeFishingRod recipeLiquidIron recipeSwordForm recipeFish recipeWaterBucket1 recipeWaterBucket2 |
+    | recipeHardwood recipeDeck recipeSail recipeRaft recipeFlamingTorch2 recipePeople recipeSword1 recipeSword2 recipeHotSword |
+    
+    | exchangeRope exchangeAx exchangeMap exchangeMysteriousStone exchangeBanana exchangeBucket exchangePickax exchangeSword |
 
     introductionText := #(
     ).
@@ -36,49 +51,120 @@ Object subclass: Game [
     ]
 
     init [
-        |phone pen thing sign ax sword rope someplace jungle1 jungle2 jungle3 jungle4 jungle5 jungle6 jungle7 guard eagle native
-         jungle1GameObjects jungle1NPCS recipeThing recipeWood flamingTorch ocean1 raft map exchangeAx |
-         
-        phone := GameObject newGameObject: 'phone' desc: 'Glowing' pick: true use: false.
-        pen := GameObject newGameObject: 'pen' desc: 'Shiny' pick: true use: false.
-        thing := GameObject newGameObject: 'thing' desc: 'Strange' pick: true use: false.
-        sign := GameObject newGameObject: 'sign' desc: 'W - path to mountain peak, N - jungle, E - village, S - path to cave' pick: false use: false.
-        ax := GameObject newGameObject: 'ax' desc: 'A sturdy ax for chopping wood.' pick: true use: true.
-        sword := GameObject newGameObject: 'sword' desc: '' pick: true use: false.
-        rope := GameObject newGameObject: 'rope' desc: 'It is a strong rope. Can be useful' pick: true use: false.
-        flamingTorch := GameObject newGameObject: 'flamingTorch' desc: '' pick: true use: false.
+        totem := GameObject newGameObject: 'totem' desc: '' pick: false use: true. 
+        tree := GameObject newGameObject: 'tree' desc: '' pick: false use: false.
+        stick := GameObject newGameObject: 'stick' desc: '' pick: true use: false.
+        bananaTree := GameObject newGameObject: 'banana_tree' desc: '' pick: false use: false.
+        lavaSource := GameObject newGameObject: 'lava_source' desc: '' pick: false use: true.
+        rose := GameObject newGameObject: 'rose' desc: 'It''s beautiful flower.' pick: true use: false.
+        dandelion := GameObject newGameObject: 'dandelion' desc: 'Common flower.' pick: true use: false.
+        bush := GameObject newGameObject: 'bush' desc: '' pick: true use: false.
+        note1 := GameObject newGameObject: 'note1' desc: '"We got to the village. The people are primitive, but they understand our language very well. He told us to go to the "hot mountain". Perhaps we will be able to call for help from on high."' pick: true use: false.
+        note2 := GameObject newGameObject: 'note2' desc: '"We reached the top of the "hot mountain", which turned out to be an active volcano. We tried sending smoke signs but unfortunately it didn''t help. We are now going to the cave at the foot of the volcano. Apparently a wise man lives there, and besides (unreadable)"' pick: true use: false.
+        note3 := GameObject newGameObject: 'note3' desc: '"We talked to the old native in the cave. He instructed us to go to a nearby island. He is said to be more civilized than this one. We saw her from the top of the volcano. We just need to build a ship. We go west, where there is the best access to the ocean."' pick: true use: false.
+        note4 := GameObject newGameObject: 'note4' desc: '"We cut down some trees. One of them was really big. It grew next to a primitive totem in the north of the island. The natives mentioned something as a special tree, but we didn''t care. We are going to the ocean now to sail to another island."' pick: true use: false.
+        note5 := GameObject newGameObject: 'note5' desc: '"We built a boat, we''re le" The note ends in half a sentence.' pick: true use: false.
+        ironOre := GameObject newGameObject: 'iron_ore' desc: '' pick: false use: false.
+        notebook := GameObject newGameObject: 'notebook' desc: 'This looks like the diary of one of the passengers. The handwriting is very blurry. "We have a damaged engine, the pilot says we have to make an emergency landing on (unreadable)." "We crashed, only three of us survived. Our little group of survivors will try to find rescue. We tried to find all (unreadable), but we may have missed someone. So I leave this (unreadable). If you read this - find us. We''re going (unreadable)." The next pages are torn out.' pick: true use: false.
+        palm := GameObject newGameObject: 'palm' desc: '' pick: false use: false.
+        signpost := GameObject newGameObject: 'signpost' desc: 'North - trees, East - hot mountaint, South - people, West - a lot of water' pick: false use: false.
+        stone := GameObject newGameObject: 'stone' desc: '' pick: true use: false.
+        well := GameObject newGameObject: 'well' desc: '' pick: false use: true.
+        string := GameObject newGameObject: 'string' desc: '' pick: true use: false.
+        wreck := GameObject newGameObject: 'wreck' desc: 'A very primitive boat made up of several logs and lianas. But it looks like it was burnt?' pick: false use: false.
+        meat := GameObject newGameObject: 'meat' desc: '' pick: true use: false.
+        cloth := GameObject newGameObject: 'cloth' desc: 'It seems to be flammable.' pick: true use: false.
+        sheets := GameObject newGameObject: 'sheets' desc: '' pick: true use: false.
+        blastFurnace := GameObject newGameObject: 'blast_furnace' desc: '' pick: false use: true.
+        anvil := GameObject newGameObject: 'anvil' desc: '' pick: false use: true.
+        banana := GameObject newGameObject: 'banana' desc: '' pick: true use: false.
+        wood := GameObject newGameObject: 'wood' desc: '' pick: true use: false.
+        mast := GameObject newGameObject: 'mast' desc: '' pick: true use: false.
+        brushwood := GameObject newGameObject: 'brushwood' desc: 'A bunch of dry branches.' pick: true use: false.
+        torch := GameObject newGameObject: 'torch' desc: '' pick: true use: false.
+        flamingTorch := GameObject newGameObject: 'flaming_torch' desc: 'The light of this torch can light up the darkness.' pick: true use: false.
+        rawIron := GameObject newGameObject: 'raw_iron' desc: '' pick: true use: false.
+        fishingRod := GameObject newGameObject: 'fishing_rod' desc: '' pick: true use: false.
+        liquidIron := GameObject newGameObject: 'liquid_iron' desc: '' pick: true use: false.
+        swordForm := GameObject newGameObject: 'sword_form' desc: '' pick: true use: false.
+        fish := GameObject newGameObject: 'fish' desc: '' pick: true use: false.
+        waterBucket := GameObject newGameObject: 'water_bucket' desc: '' pick: true use: false.
+        hardwood := GameObject newGameObject: 'hardwood' desc: '' pick: true use: false.
+        deck := GameObject newGameObject: 'deck' desc: '' pick: true use: false.
+        sail := GameObject newGameObject: 'sail' desc: '' pick: true use: false.
         raft := GameObject newGameObject: 'raft' desc: '' pick: true use: false.
-        map := GameObject newGameObject: 'map' desc: '' pick: true use: false.
+        people := GameObject newGameObject: 'people' desc: 'Thank God you''re here! This tree that we cut down was really magical! When we tried to launch our boat, a big storm broke out. Lightning struck all around us, and finally one hit our boat and sent us to nothingness. You save our lives.' pick: true use: false.
+        sword := GameObject newGameObject: 'sword' desc: '' pick: true use: true.
+        hotSword := GameObject newGameObject: 'hot_sword' desc: '' pick: true use: false.
+        rope := GameObject newGameObject: 'rope' desc: '' pick: true use: false.
+        ax := GameObject newGameObject: 'ax' desc: 'Old, but perfect for cutting trees.' pick: true use: true.
+        map := GameObject newGameObject: 'map' desc: 'Thanks to the map, you can discover and remember new areas on the island.' pick: true use: false.
+        mysteriousStone := GameObject newGameObject: 'mysterious_stone' desc: '' pick: true use: false.
+        bucket := GameObject newGameObject: 'bucket' desc: '' pick: true use: false.
+        pickax := GameObject newGameObject: 'pickax' desc: 'Slightly rusty, but still fit for work.' pick: true use: true.
+        phone := GameObject newGameObject: 'phone' desc: 'Works, but no signal.' pick: true use: false.
+        pond := GameObject newGameObject: 'pond' desc: '' pick: false use: true.
 
-        recipeThing := Recipe newRecipe: phone gameObject2: pen res: thing.
-        recipeWood := Recipe newRecipe: ax gameObject2: sign res: thing.
+        exchangeRope := Exchange newExchange: banana offerObject: rope desc: 'This monkey was obviously just hungry. Monkey took the fruit and walked away. You can safely take the rope it was hanging on.'.
+        exchangeAx := Exchange newExchange: phone offerObject: ax desc: 'Whoa! Shiny! Interesting. Take my ax.'.
+        exchangeMap := Exchange newExchange: rose offerObject: ax desc: 'Beautiful! Great idea! Thank you. Take this map. Thanks to it you will not get lost.'.
+        exchangeMysteriousStone := Exchange newExchange: sword offerObject: mysteriousStone desc: 'Yes! Now I feel like I can go in peace! So that''s what I missed! Thank you! Please take this stone. The ghosts told me to keep an eye on him. Goodbye...'.
+        exchangeBanana := Exchange newExchange: meat offerObject: banana desc: 'Delicious! Thank you! In return, I can give you this fruit that they keep feeding me.'.
+        exchangeBucket := Exchange newExchange: dandelion offerObject: bucket desc: 'Thank you friend. An ordinary flower, and so pleasing to the eye. It''s not much, but that''s all I can give you.'.
+        exchangePickax := Exchange newExchange: fish offerObject: pickax desc: 'It looks delicious! Thank you! Take my pickaxe and mine some ore.'.
+        exchangeSword := Exchange newExchange: rawIron offerObject: sword desc: 'Looks like high quality ore. I''m about to forge a decent sword out of it.'.
 
-        exchangeAx := Exchange newExchange: phone offerObject: ax descr: 'Prosz'.
+        ancientGuard := Npc newNpc: 'ancient_guard' desc: 'The statue shows a knight in full armor. However, his hands are empty...' speech: 'Hello traveler. I used to be a ruthless knight but was cursed by the village shaman. Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior". I do not know what it means. Help me please and I will reward you generously.' exchange: {exchangeMysteriousStone.}.
+        monkey := Npc newNpc: 'monkey' desc: 'It''s definitely a bad monkey. Why? Interestingly, instead of on the liana, the monkey hangs on a fairly solid rope.' speech: 'U-u-aaaa! Buaaaaa!' exchange: {exchangeRope}.
+        oldNative := Npc newNpc: 'old_native' desc: '' speech: 'Hello friend. I am m''Ilio. I used to be a village chief, but I stepped back into the shadows after losing the battle with the invaders. I would like to leave this cave, but I am afraid of the reaction of the other inhabitants. However, I will be very grateful to you if you bring me something that will make me remember about the outside world even for a short time. I am also very hungry. My son brings me food sometimes, but it''s usually fruit or nuts. I want meat. Bring them to me and I will reward you.' exchange: {exchangeBanana. exchangeBucket}.
+        native := Npc newNpc: 'native' desc: '' speech: 'Hello Stranger. You seem like a good man. I have a request for you. My father lives in a cave in the north of the island. I''d like to take him some meat, but I haven''t had time for that lately. Could you do it for me? My father will be grateful. You can get the meat from the cellar. By the way... I would like to give my chosen one a little thing, but I have no idea. Could you please find something for me? I''m afraid to walk in the jungle. If you help me, I''ll give you my old map. Maybe it will be useful to you. I can also exchange my ax for some interesting item.' exchange: {exchangeAx. exchangeMap}.
+        blacksmith := Npc newNpc: 'blacksmith' desc: '' speech: 'Hello traveler. I am a local blacksmith. I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources. I heard that there are still deposits of iron left in the cave in the north of the island. If you give me a fish, I will give you my pickaxe so that you can mine the ore.' exchange: {exchangePickax. exchangeSword}.
 
-        native := Npc newNpc: 'Native' desc: 'You see a native, whose face is obscured by darkness. Try interacting with him, if you''re brave enough.' dialogue: 'Hey you, are you looking for an ax? I will give it to you for something that will entertain my children.' exchange: {exchangeAx}.
-        guard := Npc newNpc: 'Guard' desc: 'It looks like someone is guarding the ruins. You should try talking to him, maybe he''ll let you by easily.' dialogue: 'You really thought I would let you in? You have no chance if you''re unarmed.' exchange: {}.
+        recipeBanana := Recipe newRecipe: stone gameObject2: bananaTree res: banana.
+        recipeWood := Recipe newRecipe: ax gameObject2: tree res: wood.
+        recipeMast := Recipe newRecipe: ax gameObject2: palm res: mast.
+        recipeBrushwood1 := Recipe newRecipe: ax gameObject2: bush res: brushwood.
+        recipeBrushwood2 := Recipe newRecipe: sword gameObject2: bush res: brushwood.
+        recipeTorch1 := Recipe newRecipe: stick gameObject2: cloth res: torch.
+        recipeTorch2 := Recipe newRecipe: brushwood gameObject2: cloth res: torch.
+        recipeFlamingTorch1 := Recipe newRecipe: torch gameObject2: lavaSource res: flamingTorch.
+        recipeRawIron := Recipe newRecipe: ironOre gameObject2: pickax res: rawIron.
+        recipeFishingRod := Recipe newRecipe: string gameObject2: stick res: fishingRod.
+        recipeLiquidIron := Recipe newRecipe: rawIron gameObject2: blastFurnace res: liquidIron.
+        recipeSwordForm := Recipe newRecipe: stick gameObject2: liquidIron res: swordForm.
+        recipeFish := Recipe newRecipe: fishingRod gameObject2: pond res: fish.
+        recipeWaterBucket1 := Recipe newRecipe: bucket gameObject2: well res: waterBucket.
+        recipeWaterBucket2 := Recipe newRecipe: bucket gameObject2: pond res: waterBucket.
+        recipeHardwood := Recipe newRecipe: wood gameObject2: wood res: hardwood.
+        recipeDeck := Recipe newRecipe: hardwood gameObject2: rope res: deck.
+        recipeSail := Recipe newRecipe: mast gameObject2: sheets res: sail.
+        recipeRaft := Recipe newRecipe: sail gameObject2: deck res: raft.
+        recipeFlamingTorch2 := Recipe newRecipe: torch gameObject2: blastFurnace res: flamingTorch.
+        recipePeople := Recipe newRecipe: mysteriousStone gameObject2: totem res: people.
+        recipeSword1 := Recipe newRecipe: hotSword gameObject2: waterBucket res: sword.
+        recipeSword2 := Recipe newRecipe: hotSword gameObject2: pond res: sword.
+        recipeHotSword := Recipe newRecipe: swordForm gameObject2: anvil res: hotSword.
 
         ocean1 := Location newLocation: 7 newName: 'Ocean' desc: 'You are at the ocean' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle2 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle3 := Location newLocation: 3 newName: 'Jungle3' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle4 := Location newLocation: 4 newName: 'Jungle4' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle5 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle6 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
-        jungle1 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {sign.} locNpcs: {native} isDark: false.
-        someplace := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {thing. phone. map.} locNpcs: {native} isDark: false.
+        jungle1 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle2 := Location newLocation: 3 newName: 'Jungle3' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        darkJungle1 := Location newLocation: 4 newName: 'Jungle4' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        darkJungle2 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        beach1 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        beach2 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {signpost.} locNpcs: {native} isDark: false.
+        fields2 := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {phone. map.} locNpcs: {native} isDark: false.
         
-        currentLocation:= someplace.
+        currentLocation := fields2.
 
         isGameOver := false.
         playerObjects := OrderedCollection new.
         playerObjects add: phone.
-        playerObjects add: pen.
-        playerObjects add: pen.
-        playerObjects add: raft.
 
-        recipes := {recipeThing. recipeWood}.
+        recipes := {recipeBanana. recipeWood. recipeMast. recipeBrushwood1. recipeBrushwood2. recipeTorch1. recipeTorch2. recipeFlamingTorch1.
+                    recipeRawIron. recipeFishingRod. recipeLiquidIron. recipeSwordForm. recipeFish. recipeWaterBucket1. recipeWaterBucket2.
+                    recipeHardwood. recipeDeck. recipeSail. recipeRaft. recipeFlamingTorch2. recipePeople. recipeSword1. recipeSword2. recipeHotSword}.
 
-        locations := {ocean1. jungle1. jungle2. jungle3. jungle4. jungle5. jungle6. someplace}.
+        locations := {ocean1. jungle1. jungle2. darkJungle1. darkJungle2. beach1. beach2. fields2}.
     ]
 
     "Print strings from array in separate lines."

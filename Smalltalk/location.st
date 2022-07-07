@@ -1,93 +1,90 @@
 Object subclass: Location [
-     |locationId locationName locationDescrption north south west east |
-     |locationObjects |
-     |locationNpcs |
-     |locationDark |
-     |locationDiscovered |
+    | locationId locationName locationDescrption north south west east |
+    | locationObjects locationNpcs locationDark locationDiscovered |
 
-     Location class >> newLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
-          | l |
-          l := super new. 
-          l initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark.
-          ^l
-     ]
+    Location class >> newLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
+        | l |
+        l := super new. 
+        l initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark.
+        ^l
+    ]
 
-     initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
-          locationId := id.
-          locationName := name.
-          locationDescrption := description.
-          north := lNorth.
-          west := lWest.
-          south := lSouth.
-          east := lEast.
-          locationObjects := OrderedCollection new.
-          objects do: [ :object | locationObjects add: object ].
-          locationNpcs := npcs.
-          locationDark := dark.
-          locationDiscovered := false.
-     ]
+    initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
+        locationId := id.
+        locationName := name.
+        locationDescrption := description.
+        north := lNorth.
+        west := lWest.
+        south := lSouth.
+        east := lEast.
+        locationObjects := OrderedCollection new.
+        objects do: [ :object | locationObjects add: object ].
+        locationNpcs := npcs.
+        locationDark := dark.
+        locationDiscovered := false.
+    ]
 
-     printOn: stream [
-          super printOn: stream.
-          locationName printOn: stream.
-          locationDescrption printOn: stream.
-          locationObjects printOn: stream.
-          locationNpcs printOn: stream.
-     ]
+    printOn: stream [
+        super printOn: stream.
+        locationName printOn: stream.
+        locationDescrption printOn: stream.
+        locationObjects printOn: stream.
+        locationNpcs printOn: stream.
+    ]
 
-     getN [
-          ^north
-     ]
-        
-     getE [
-          ^east
-     ]
+    getN [
+        ^north
+    ]
+    
+    getE [
+        ^east
+    ]
 
-     getS[
-          ^south
-     ]
-     
-     getW [
-          ^west
-     ]
+    getS[
+        ^south
+    ]
+    
+    getW [
+        ^west
+    ]
 
-     getId [
-          ^locationId
-     ]
-     
-     getObjects [
-        ^locationObjects
-     ]
+    getId [
+        ^locationId
+    ]
+    
+    getObjects [
+    ^locationObjects
+    ]
 
-     getName [
-        ^locationName
-     ]
+    getName [
+    ^locationName
+    ]
 
-     getDescription [
-          ^locationDescrption
-     ]
+    getDescription [
+        ^locationDescrption
+    ]
 
-     getNpcs [
-        ^locationNpcs
-     ]
+    getNpcs [
+    ^locationNpcs
+    ]
 
-     removeObject: object [
-        locationObjects remove: object.
-     ]
+    removeObject: object [
+    locationObjects remove: object.
+    ]
 
-     addObject: object [
-        locationObjects add: object.
-     ]
+    addObject: object [
+    locationObjects add: object.
+    ]
 
-     isDark [
-          ^locationDark
-     ]
+    isDark [
+        ^locationDark
+    ]
 
-     isDiscovered [
-          ^locationDiscovered
-     ]
+    isDiscovered [
+        ^locationDiscovered
+    ]
 
-     discover [
-          locationDiscovered := true.
-     ]
+    discover [
+        locationDiscovered := true.
+    ]
 ]

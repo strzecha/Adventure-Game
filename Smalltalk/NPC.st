@@ -1,17 +1,17 @@
 Object subclass: Npc [
-    | npcName npcDescription speakDialogue exchanges |
+    | npcName npcDescription npcSpeech exchanges |
 
-    Npc class >> newNpc: name desc: description dialogue: speak exchange: exs [
+    Npc class >> newNpc: name desc: description speech: speak exchange: exs [
           | n |
           n := super new. 
-          n initNpc: name desc: description dialogue: speak exchange: exs.
+          n initNpc: name desc: description speech: speak exchange: exs.
           ^n
     ]
 
-    initNpc: name desc: description dialogue: speak exchange: exs [
+    initNpc: name desc: description speech: speak exchange: exs [
         npcName := name.
         npcDescription := description.
-        speakDialogue := speak.
+        npcSpeech := speak.
         exchanges := exs.
     ]
 
@@ -30,7 +30,7 @@ Object subclass: Npc [
     ]
 
     talk [
-        Transcript show: speakDialogue; cr.
+        Transcript show: npcSpeech; cr.
     ]
 
     getExchanges [
