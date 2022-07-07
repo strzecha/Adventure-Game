@@ -1,6 +1,6 @@
 Object subclass: Location [
      |locationId locationName locationDescrption north south west east |
-     |locationGameObjects |
+     |locationObjects |
      |locationNpcs |
      |locationDark |
      |locationDiscovered |
@@ -20,7 +20,7 @@ Object subclass: Location [
           west := lWest.
           south := lSouth.
           east := lEast.
-          locationGameObjects := objects.
+          locationObjects := objects.
           locationNpcs := npcs.
           locationDark := dark.
           locationDiscovered := false.
@@ -30,7 +30,7 @@ Object subclass: Location [
           super printOn: stream.
           locationName printOn: stream.
           locationDescrption printOn: stream.
-          locationGameObjects printOn: stream.
+          locationObjects printOn: stream.
           locationNpcs printOn: stream.
      ]
 
@@ -54,8 +54,8 @@ Object subclass: Location [
           ^locationId
      ]
      
-     getGameObjects [
-        ^locationGameObjects
+     getObjects [
+        ^locationObjects
      ]
 
      getName [
@@ -71,11 +71,11 @@ Object subclass: Location [
      ]
 
      removeGameObjectByName: name [
-        locationGameObjects remove: name.
+        locationObjects remove: name.
      ]
 
      removeGameObject: object [
-          locationGameObjects := locationGameObjects copyWithout: object.
+          locationObjects := locationObjects copyWithout: object.
      ]
 
      isDark [

@@ -114,7 +114,7 @@ Object subclass: Game [
         ].
         Transcript show: location getDescription; cr.
         Transcript show: 'You see:'; cr.
-        self printNames: location getGameObjects.
+        self printNames: location getObjects.
         self printNames: location getNpcs.
         ^true.
     ]
@@ -125,7 +125,7 @@ Object subclass: Game [
 
     examine: objectName [
         playerObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
-        currentLocation getGameObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
+        currentLocation getObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
     ]
 
     findByName: name and: anArray [
@@ -211,7 +211,7 @@ Object subclass: Game [
 
     pick: objectName [
         | its i |
-        its := currentLocation getGameObjects.
+        its := currentLocation getObjects.
         i := self findByName: objectName and: its.
         i = nil
         ifTrue: [
@@ -258,7 +258,7 @@ Object subclass: Game [
         objectInArray := self findByName: object getName and: playerObjects.
         objectInArray = nil
         ifTrue: [
-            objectInArray := self findByName: object getName and: currentLocation getGameObjects.
+            objectInArray := self findByName: object getName and: currentLocation getObjects.
             objectInArray = nil
             ifFalse: [
                 currentLocation removeGameObject: object.
@@ -275,7 +275,7 @@ Object subclass: Game [
     use: objectName1 and: objectName2 [
         |object1 object2 recipe result objectLoc|
 
-        object1 := self isAvailable: objectName1 and: playerObjects, currentLocation getGameObjects.
+        object1 := self isAvailable: objectName1 and: playerObjects, currentLocation getObjects.
         object1 = nil
         ifTrue: [
             Transcript show: 'You don''t have '.
@@ -283,40 +283,13 @@ Object subclass: Game [
             ^false.
         ].
 
-        object2 := self isAvailable: objectName2 and: playerObjects, currentLocation getGameObjects.
+        object2 := self isAvailable: objectName2 and: playerObjects, currentLocation getObjects.
         object2 = nil
         ifTrue: [
             Transcript show: 'You don''t have '.
             Transcript show: objectName2; cr.
             ^false.
         ].
-
-        "objectLoc := false.
-
-        object1 := self findByName: objectName1 and: playerObjects.
-
-        object1 = nil
-        ifTrue: [
-            Transcript show: 'You do not have '.
-            Transcript show: objectName1; cr.
-            ^false.
-        ].
-
-        object2 := self findByName: objectName2 and: playerObjects.
-
-        object2 = nil
-        ifTrue: [
-            object2 := self findByName: objectName2 and: currentLocation getGameObjects.
-
-            object2 = nil
-            ifTrue: [
-                Transcript show: 'You do not have '.
-                Transcript show: objectName2; cr.
-                ^false.
-            ].
-
-            objectLoc := true.
-        ]."
 
         recipe := self findRecipe: object1 and: object2.
 
@@ -325,24 +298,6 @@ Object subclass: Game [
             Transcript show: 'You cannot do that'; cr.
             ^false.
         ].
-
-        "object1 isReusable
-        ifFalse: [
-            playerObjects := playerObjects copyWithout: object1.
-        ].
-        objectLoc
-        ifTrue: [
-            object2 isReusable
-            ifFalse: [
-            	currentLocation removeGameObject: object2.
-            ]
-        ]
-        ifFalse: [
-            object2 isReusable
-            ifFalse: [
-               playerObjects := playerObjects copyWithout: object2.
-            ]
-        ]."
 
         self useUp: object1.
         self useUp: object2.
