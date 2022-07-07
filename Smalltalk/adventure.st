@@ -43,7 +43,7 @@ Object subclass: Game [
         pen := GameObject newGameObject: 'pen' desc: 'Shiny' pick: true use: false.
         thing := GameObject newGameObject: 'thing' desc: 'Strange' pick: true use: false.
         sign := GameObject newGameObject: 'sign' desc: 'W - path to mountain peak, N - jungle, E - village, S - path to cave' pick: false use: false.
-        ax := GameObject newGameObject: 'ax' desc: 'A sturdy ax for chopping wood.' pick: true use: false.
+        ax := GameObject newGameObject: 'ax' desc: 'A sturdy ax for chopping wood.' pick: true use: true.
         sword := GameObject newGameObject: 'sword' desc: '' pick: true use: false.
         rope := GameObject newGameObject: 'rope' desc: 'It is a strong rope. Can be useful' pick: true use: false.
         flamingTorch := GameObject newGameObject: 'flamingTorch' desc: '' pick: true use: false.
@@ -58,14 +58,14 @@ Object subclass: Game [
         native := Npc newNpc: 'Native' desc: 'You see a native, whose face is obscured by darkness. Try interacting with him, if you''re brave enough.' dialogue: 'Hey you, are you looking for an ax? I will give it to you for something that will entertain my children.' exchange: {exchangeAx}.
         guard := Npc newNpc: 'Guard' desc: 'It looks like someone is guarding the ruins. You should try talking to him, maybe he''ll let you by easily.' dialogue: 'You really thought I would let you in? You have no chance if you''re unarmed.' exchange: {}.
 
-        ocean1 := Location newLocation: 7 newName: 'Ocean' desc: 'You are at the ocean' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
-        jungle2 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
-        jungle3 := Location newLocation: 3 newName: 'Jungle3' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
-        jungle4 := Location newLocation: 4 newName: 'Jungle4' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
-        jungle5 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
-        jungle6 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
-        jungle1 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {sign.} locNpcs: {native} isDark: false isDiscovered: false.
-        someplace := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {thing. phone. map.} locNpcs: {native} isDark: false isDiscovered: true.
+        ocean1 := Location newLocation: 7 newName: 'Ocean' desc: 'You are at the ocean' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle2 :=  Location newLocation: 2 newName: 'Jungle2' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle3 := Location newLocation: 3 newName: 'Jungle3' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle4 := Location newLocation: 4 newName: 'Jungle4' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle5 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle6 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false.
+        jungle1 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {sign.} locNpcs: {native} isDark: false.
+        someplace := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {thing. phone. map.} locNpcs: {native} isDark: false.
         
         currentLocation:= someplace.
 
@@ -234,17 +234,64 @@ Object subclass: Game [
 
     findRecipe: object1 and: object2 [
         recipes do: [ :recipe | 
-        ((recipe getIngredient1 = object1 & recipe getIngredient2 = object2) |
-        (recipe getIngredient1 = object2 & recipe getIngredient1 = object2)) ifTrue: [
+        ((recipe getObject1 = object1 & recipe getObject2 = object2) |
+        (recipe getObject1 = object2 & recipe getObject1 = object2)) ifTrue: [
             ^recipe.
         ]].
         ^nil.
     ]
 
+    isAvailable: name and: objects [
+        objects do: [ :object | object getName = name ifTrue: [
+            ^object.
+        ]].
+        ^nil.
+    ]
+
+    useUp: object [
+        | objectInArray |
+        object isReusable
+        ifTrue: [
+            ^true.
+        ].
+
+        objectInArray := self findByName: object getName and: playerObjects.
+        objectInArray = nil
+        ifTrue: [
+            objectInArray := self findByName: object getName and: currentLocation getGameObjects.
+            objectInArray = nil
+            ifFalse: [
+                currentLocation removeGameObject: object.
+                ^true.
+            ].
+            ^false.
+        ]
+        ifFalse: [
+            playerObjects := playerObjects copyWithout: object.
+            ^true.
+        ].
+    ]
+
     use: objectName1 and: objectName2 [
         |object1 object2 recipe result objectLoc|
 
-        objectLoc := false.
+        object1 := self isAvailable: objectName1 and: playerObjects, currentLocation getGameObjects.
+        object1 = nil
+        ifTrue: [
+            Transcript show: 'You don''t have '.
+            Transcript show: objectName1; cr.
+            ^false.
+        ].
+
+        object2 := self isAvailable: objectName2 and: playerObjects, currentLocation getGameObjects.
+        object2 = nil
+        ifTrue: [
+            Transcript show: 'You don''t have '.
+            Transcript show: objectName2; cr.
+            ^false.
+        ].
+
+        "objectLoc := false.
 
         object1 := self findByName: objectName1 and: playerObjects.
 
@@ -269,7 +316,7 @@ Object subclass: Game [
             ].
 
             objectLoc := true.
-        ].
+        ]."
 
         recipe := self findRecipe: object1 and: object2.
 
@@ -279,7 +326,7 @@ Object subclass: Game [
             ^false.
         ].
 
-        object1 isReusable
+        "object1 isReusable
         ifFalse: [
             playerObjects := playerObjects copyWithout: object1.
         ].
@@ -295,7 +342,10 @@ Object subclass: Game [
             ifFalse: [
                playerObjects := playerObjects copyWithout: object2.
             ]
-        ].
+        ]."
+
+        self useUp: object1.
+        self useUp: object2.
 
         playerObjects add: recipe getResult.
 

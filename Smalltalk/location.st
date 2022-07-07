@@ -5,14 +5,14 @@ Object subclass: Location [
      |locationDark |
      |locationDiscovered |
 
-     Location class >> newLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark isDiscovered: discover [
+     Location class >> newLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
           | l |
           l := super new. 
-          l initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark isDiscovered: discover.
+          l initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark.
           ^l
      ]
 
-     initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark isDiscovered: discover [
+     initLocation: id newName: name desc: description northLoc: lNorth westLoc: lWest southLoc: lSouth eastLoc: lEast locGameObjects: objects locNpcs: npcs isDark: dark [
           locationId := id.
           locationName := name.
           locationDescrption := description.
@@ -23,7 +23,7 @@ Object subclass: Location [
           locationGameObjects := objects.
           locationNpcs := npcs.
           locationDark := dark.
-          locationDiscovered := discover.
+          locationDiscovered := false.
      ]
 
      printOn: stream [
