@@ -1,7 +1,7 @@
 Object subclass: Game [
      | isGameOver |
      | currentLocation |
-     | playerGameObjects |
+     | playerObjects |
      | recipes |
      | locations |
 
@@ -37,7 +37,7 @@ Object subclass: Game [
 
     init [
         |phone pen thing sign ax sword rope someplace jungle1 jungle2 jungle3 jungle4 jungle5 jungle6 jungle7 guard eagle native
-         jungle1GameObjects jungle1NPCS recipeThing recipeWood flamingTorch ocean1 raft|
+         jungle1GameObjects jungle1NPCS recipeThing recipeWood flamingTorch ocean1 raft map|
          
         phone := GameObject newGameObject: 'phone' desc: 'Glowing' pick: true use: false.
         pen := GameObject newGameObject: 'pen' desc: 'Shiny' pick: true use: false.
@@ -48,6 +48,7 @@ Object subclass: Game [
         rope := GameObject newGameObject: 'rope' desc: 'It is a strong rope. Can be useful' pick: true use: false.
         flamingTorch := GameObject newGameObject: 'flamingTorch' desc: '' pick: true use: false.
         raft := GameObject newGameObject: 'raft' desc: '' pick: true use: false.
+        map := GameObject newGameObject: 'map' desc: '' pick: true use: false.
 
         recipeThing := Recipe newRecipe: phone gameObject2: pen res: thing.
         recipeWood := Recipe newRecipe: ax gameObject2: sign res: thing.
@@ -62,15 +63,15 @@ Object subclass: Game [
         jungle5 := Location newLocation: 5 newName: 'Jungle5' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
         jungle6 := Location newLocation: 6 newName: 'Jungle6' desc: 'You are in the jungle' northLoc: nil westLoc: nil southLoc: nil eastLoc: nil locGameObjects: {} locNpcs: {} isDark: false isDiscovered: false.
         jungle1 := Location newLocation: 1 newName: 'Jungle1' desc: 'You are in the jungle1' northLoc: nil westLoc: jungle2 southLoc: 0 eastLoc: nil locGameObjects: {sign.} locNpcs: {native} isDark: false isDiscovered: false.
-        someplace := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {thing. phone} locNpcs: {native} isDark: false isDiscovered: true.
+        someplace := Location newLocation: 0 newName: 'Someplace' desc: 'You are in someplace' northLoc: 1 westLoc: 7 southLoc: 6 eastLoc: 4 locGameObjects: {thing. phone. map.} locNpcs: {native} isDark: false isDiscovered: true.
         
         currentLocation:= someplace.
 
         isGameOver := false.
-        playerGameObjects := OrderedCollection new.
-        playerGameObjects add: phone.
-        playerGameObjects add: pen.
-        playerGameObjects add: raft.
+        playerObjects := OrderedCollection new.
+        playerObjects add: phone.
+        playerObjects add: pen.
+        playerObjects add: raft.
 
         recipes := {recipeThing. recipeWood}.
 
@@ -105,7 +106,7 @@ Object subclass: Game [
     ]
 
     printLocation: location [
-        location isDark & ((self findByName: 'flamingTorch' and: playerGameObjects) = nil) ifTrue: [
+        location isDark & ((self findByName: 'flamingTorch' and: playerObjects) = nil) ifTrue: [
             Transcript show: 'You see darkness only'; cr.
             ^false.
         ].
@@ -121,7 +122,7 @@ Object subclass: Game [
     ]
 
     examine: objectName [
-        playerGameObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
+        playerObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
         currentLocation getGameObjects do: [:object | object getName = objectName ifTrue: [self printGameObjectDescription: object. ^true]].
     ]
 
@@ -199,7 +200,10 @@ Object subclass: Game [
             ^false.
         ].
 
-        newLocation discover.
+        (self findByName: 'map' and: playerObjects) = nil 
+        ifFalse: [
+            newLocation discover.
+        ].
         currentLocation := newLocation.
         self printLocation: currentLocation.
         ^true.
@@ -222,7 +226,7 @@ Object subclass: Game [
             Transcript show: objectName; cr.
             ^false.
         ].
-        playerGameObjects add: i.
+        playerObjects add: i.
         currentLocation removeGameObject: i.
         ^true.
         
@@ -242,7 +246,7 @@ Object subclass: Game [
 
         objectLoc := false.
 
-        object1 := self findByName: objectName1 and: playerGameObjects.
+        object1 := self findByName: objectName1 and: playerObjects.
 
         object1 = nil
         ifTrue: [
@@ -251,7 +255,7 @@ Object subclass: Game [
             ^false.
         ].
 
-        object2 := self findByName: objectName2 and: playerGameObjects.
+        object2 := self findByName: objectName2 and: playerObjects.
 
         object2 = nil
         ifTrue: [
@@ -277,7 +281,7 @@ Object subclass: Game [
 
         object1 isReusable
         ifFalse: [
-            playerGameObjects := playerGameObjects copyWithout: object1.
+            playerObjects := playerObjects copyWithout: object1.
         ].
         objectLoc
         ifTrue: [
@@ -289,11 +293,11 @@ Object subclass: Game [
         ifFalse: [
             object2 isReusable
             ifFalse: [
-               playerGameObjects := playerGameObjects copyWithout: object2.
+               playerObjects := playerObjects copyWithout: object2.
             ]
         ].
 
-        playerGameObjects add: recipe getResult.
+        playerObjects add: recipe getResult.
 
         Transcript show: 'You got: '.
         Transcript show: recipe getResult getName; cr.
@@ -307,7 +311,7 @@ Object subclass: Game [
 
         n = nil
         ifTrue: [
-            Transcript show: 'There is no NPC '.
+            Transcript show: 'There is no '.
             Transcript show: personName; cr.
             ^false.
         ].
@@ -324,33 +328,31 @@ Object subclass: Game [
 
         n = nil
         ifTrue: [
-            Transcript show: 'There is no NPC '.
+            Transcript show: 'There is no '.
             Transcript show: personName; cr.
             ^false.
         ].
 
-        i := self findByName: objectName and: playerGameObjects.
+        i := self findByName: objectName and: playerObjects.
         i = nil
         ifTrue: [
-            Transcript show: 'You do not have '.
+            Transcript show: 'You don''t have '.
             Transcript show: objectName; cr.
             ^false.
         ].
 
         i = n getNeedGameObject
         ifFalse: [
-            Transcript show: 'He does not want this'; cr.
+            Transcript show: 'He doesn''t want this'; cr.
             ^false.
         ].
 
         newGameObject := n getGameObject.
         n setGameObject: i.
-        playerGameObjects add: newGameObject.
-        Transcript show: 'You gave him: '.
-        Transcript show: i getName; cr.
-        Transcript show: 'He gave you: '.
+        playerObjects add: newGameObject.
+        Transcript show: 'You got '.
         Transcript show: newGameObject getName; cr.
-        playerGameObjects remove: i.
+        playerObjects remove: i.
         ^true.
     ]
 
@@ -374,7 +376,7 @@ Object subclass: Game [
             ^false.
         ].
 
-        object := self findByName: 'raft' and: playerGameObjects.
+        object := self findByName: 'raft' and: playerObjects.
         object = nil
         ifTrue: [
             Transcript show: 'You need something to cross the ocean'; cr.
@@ -402,7 +404,7 @@ Object subclass: Game [
             subs := input substrings.
             cmd := subs first.
 
-            cmd = 'help' ifTrue: [
+            cmd = 'instructions' ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -443,7 +445,7 @@ Object subclass: Game [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
-                    self printInventory: playerGameObjects.
+                    self printInventory: playerObjects.
                 ]
             ].
 
@@ -467,7 +469,7 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'pick' ifTrue: [
+            cmd = 'take' ifTrue: [
                 |arg|
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 2)
@@ -517,7 +519,7 @@ Object subclass: Game [
                 ]
             ].
 
-            cmd = 'quit' ifTrue: [
+            cmd = 'halt' ifTrue: [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
@@ -526,7 +528,7 @@ Object subclass: Game [
             ].
 
             isUnknown ifTrue: [
-                self printLines: #('Unknown command.' '')
+                self printLines: #('Unrecognized command.' '')
             ]
         ]
     ]
