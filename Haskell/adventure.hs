@@ -111,7 +111,7 @@ instructionsText = [
     "n  s  e  w             -- to go in that direction.", 
     "take Object            -- to pick up an object.",
     "drop Object            -- to put down an object.",
-    "examine Object         -- to examine an object.",
+    "examine Object/NPC     -- to examine an object or NPC.",
     "use Object Object      -- to use the objects together.",
     "inventory              -- to see the objects you are holding.",
     "look                   -- to inspect current location.",
@@ -369,7 +369,7 @@ description objects npcs =
     else if (length npcs) > 0 then
         "There are: " ++ (joinNPC npcs)
     else
-        "There are nothing"
+        "There is nothing."
 
 -- moving
 getLocation :: Location -> String -> Maybe (Maybe Location)
@@ -501,15 +501,15 @@ examineNPC npc state = printMessage (message npc) state
                 ("You don't know anything about "++(npcName npc))
 
 give :: String -> String -> GameState -> GameState
-give itName npName state = prepareExchange object npc state
+give objName npName state = prepareExchange object npc state
     where
         npc = npcInList npName (locationNPCs (currentLocation state))
-        object = objectInList itName (playerGameObjects state)
+        object = objectInList objName (playerGameObjects state)
 
         prepareExchange :: Maybe GameObject -> Maybe NPC -> GameState -> GameState
         prepareExchange object npc state = 
             case object of
-                Nothing -> printMessage ("You don't have "++itName) state
+                Nothing -> printMessage ("You don't have "++objName) state
                 Just object -> 
                     case npc of
                         Nothing -> printMessage ("There is no "++npName) state
@@ -518,7 +518,7 @@ give itName npName state = prepareExchange object npc state
 tryExchange :: Maybe Exchange -> GameState -> GameState
 tryExchange exchange state =
     case exchange of
-        Nothing -> printMessage "He don't want it" state
+        Nothing -> printMessage "He doesn't want it" state
         Just exchange -> doExchange exchange state
 
 doExchange :: Exchange -> GameState -> GameState
@@ -600,13 +600,13 @@ checkRecipe object1 object2 state =
         recipe = findRecipe object1 object2 (recipes state)
 
 isAvailable :: String -> GameState -> GameObject
-isAvailable itName state = 
+isAvailable objName state = 
     case object of
         Nothing -> blankGameObject
         Just object -> object
 
         where
-            object = objectInList itName ((locationGameObjects (currentLocation state))++(playerGameObjects state))
+            object = objectInList objName ((locationGameObjects (currentLocation state))++(playerGameObjects state))
 
 use :: String -> String -> GameState -> GameState
 use objectName1 objectName2 state = tryCraft object1 object2 state
@@ -625,12 +625,12 @@ use objectName1 objectName2 state = tryCraft object1 object2 state
                     checkRecipe object1 object2
 
 objectInList :: String -> [GameObject] -> Maybe GameObject
-objectInList itName [] = Nothing
-objectInList itName (object:objects) = do
-    if itName == name then
+objectInList objName [] = Nothing
+objectInList objName (object:objects) = do
+    if objName == name then
         Just object
     else 
-        objectInList itName objects
+        objectInList objName objects
     where
         name = (objectName object)
 
@@ -647,15 +647,15 @@ pickUp objectName state = tryPut object state
                             printMessage "You can't do this"
 
 dropGameObject :: String -> GameState -> GameState
-dropGameObject itName state = tryDrop object state
+dropGameObject objName state = tryDrop object state
     where
-        object = objectInList itName (playerGameObjects state)
+        object = objectInList objName (playerGameObjects state)
 
         tryDrop :: Maybe GameObject -> GameState -> GameState
         tryDrop object state = 
             case object of
-                Nothing -> printMessage ("You don't have "++itName) state
-                Just object -> state{output="You dropped "++itName, 
+                Nothing -> printMessage ("You don't have "++objName) state
+                Just object -> state{output="You dropped "++objName, 
                                     playerGameObjects=removeGameObject object (playerGameObjects state),
                                     currentLocation=(currentLocation state){locationGameObjects=object:(locationGameObjects (currentLocation state))}
                                     }
@@ -723,28 +723,28 @@ tryCommandZero command input =
     if length (words input) == 1 then
         command
     else
-        \state -> state{output="Wrong number of arguments"}
+        \state -> state{output="Wrong number of arguments. Required: 1"}
 
 tryCommandOne :: (String -> GameState -> GameState) -> String -> (GameState -> GameState)
 tryCommandOne command input = 
     if length (words input) == 1 then
         command input
     else
-        \state -> state{output="Wrong number of arguments"}
+        \state -> state{output="Wrong number of arguments. Required: 1"}
 
 tryCommandTwo :: (String -> GameState -> GameState) -> String -> (GameState -> GameState)
 tryCommandTwo command input = 
     if length (words input) == 2 then
         command ((words input)!!1)
     else
-        \state -> state{output="Wrong number of arguments"}
+        \state -> state{output="Wrong number of arguments. Required: 2"}
 
 tryCommandThree :: (String -> String -> GameState -> GameState) -> String -> (GameState -> GameState)
 tryCommandThree command input = 
     if length (words input) == 3 then
         command ((words input)!!1) ((words input)!!2)
     else
-        \state -> state{output="Wrong number of arguments"}
+        \state -> state{output="Wrong number of arguments. Required: 3"}
 
 parseCommand :: String -> GameState -> GameState
 parseCommand input = 

@@ -341,7 +341,7 @@ give(Object, NPC) :-
         retract(holding(Object)),
         assert(holding(Gift)),
         assert(is_pickable(Gift)),
-        describe(Object, NPC),
+        describeExchange(Object, NPC),
         write('You got '), write(Gift),
         nl, !.
 
@@ -349,7 +349,7 @@ give(Object, NPC) :-
         i_am_at(Location),
         at(NPC, Location),
         holding(Object),
-        write('He don''t want it'),
+        write('He doesn''t want it'),
         nl, !.
 
 give(Object, NPC) :-
@@ -421,7 +421,7 @@ leave :-
         at_ocean,
         holding(raft),
         has_notes,
-        write('You left the island. You found the rest of the passengers, but didn''t know their full story.'), nl,
+        write('You left the island. You complete the story, but didn''t find rest of the passengers.'), nl,
         finish,
         !.
 
@@ -429,7 +429,7 @@ leave :-
         at_ocean,
         holding(raft),
         holding(people),
-        write('You left the island. You complete the story, but didn''t find rest of the passengers.'), nl,
+        write('You left the island. You found the rest of the passengers, but didn''t know their full story.'), nl,
         finish,
         !.
 
@@ -456,9 +456,16 @@ notice_objects_at(Location) :-
         fail.
 
 /* This rule tells how to look about you */
+not_empty(Location) :-
+        at(_, Location), !.
+
+not_empty(_) :-
+        write('There is nothing.'),
+        fail.
 
 print_objects(Location) :-
         i_am_at(Location),
+        not_empty(Location),
         write('There are: '),
         notice_objects_at(Location),
         nl, !.
@@ -532,7 +539,7 @@ instructions :-
         write('n.  s.  e.  w.           -- to go in that direction.'), nl,
         write('take(Object).            -- to pick up an object.'), nl,
         write('drop(Object).            -- to put down an object.'), nl,
-        write('examine(Object).         -- to examine an object.'), nl,
+        write('examine(Object/NPC).     -- to examine an object or NPC.'), nl,
         write('use(Object, Object).     -- to use the objects together.'), nl,
         write('inventory.               -- to see the objects you are holding.'), nl,
         write('look.                    -- to inspect current locations.'), nl,

@@ -18,8 +18,9 @@ Object subclass: Location [
         south := s.
         east := e.
         locationObjects := OrderedCollection new.
-        objects do: [ :object | locationObjects add: object ].
-        locationNPCs := npcs.
+        locationObjects addAll: objects.
+        locationNPCs := OrderedCollection new.
+        locationNPCs addAll: npcs.
         locationDark := dark.
         locationDiscovered := false.
     ]

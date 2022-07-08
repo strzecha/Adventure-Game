@@ -31,7 +31,7 @@ Object subclass: Game [
         'n  s  e  w             -- to go in that direction.'
         'take Object            -- to pick up an object.'
         'drop Object            -- to put down an object.'
-        'examine Object         -- to examine an object.'
+        'examine Object/NPC     -- to examine an object or NPC.'
         'use Object Object      -- to use the objects together.'
         'inventory              -- to see the objects you are holding.'
         'look                   -- to inspect current location.'
@@ -281,18 +281,23 @@ Object subclass: Game [
         Transcript cr.
     ]
 
-    printLocation: location [
+    look: location [
         location isDark & ((self findByName: 'flaming_torch' and: playerObjects) = nil) ifTrue: [
             Transcript show: 'You see darkness only'; cr.
             ^false.
         ].
         Transcript show: location getDescription; cr.
-        Transcript show: 'There are: '.
-        self printNames: location getObjects, location getNPCs.
+        (location getObjects, location getNPCs) size > 0
+        ifTrue: [
+            Transcript show: 'There are: '.
+            self printNames: location getObjects, location getNPCs.
+            ^true.
+        ].
+        Transcript show: 'There is nothing.'.
         ^true.
     ]
 
-    printGameObjectDescription: object [
+    printObjectDescription: object [
         object getDescription = ''
         ifTrue: [
             Transcript show: 'You don''t know anything about ', object getName; cr.
@@ -399,7 +404,7 @@ Object subclass: Game [
             Transcript show: 'There is no ', objectName; cr.
             ^false.
         ].
-        self printGameObjectDescription: object. 
+        self printObjectDescription: object. 
         ^true
     ]
 
@@ -408,7 +413,7 @@ Object subclass: Game [
         ^nil.
     ]
 
-    pick: objectName [
+    take: objectName [
         | object |
         object := self findByName: objectName and: currentLocation getObjects.
         object = nil
@@ -537,7 +542,7 @@ Object subclass: Game [
             newLocation discover.
         ].
         currentLocation := newLocation.
-        self printLocation: currentLocation.
+        self look: currentLocation.
         ^true.
     ]
 
@@ -636,7 +641,7 @@ Object subclass: Game [
 
         self printIntroduction.
         self printInstructions.
-        self printLocation: currentLocation.
+        self look: currentLocation.
 
         "Game loop."
         [isGameOver] whileFalse: [
@@ -705,7 +710,7 @@ Object subclass: Game [
                 isUnknown := false.
                 (self checkNumOfArgs: subs and: 1)
                 ifTrue: [
-                    self printLocation: currentLocation.
+                    self look: currentLocation.
                 ]
             ].
 
@@ -736,7 +741,7 @@ Object subclass: Game [
                 (self checkNumOfArgs: subs and: 2)
                 ifTrue: [
                     objectName := subs at:2.
-                    self pick: objectName.
+                    self take: objectName.
                 ]
             ].
 
