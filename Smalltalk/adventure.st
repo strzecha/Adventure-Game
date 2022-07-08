@@ -557,24 +557,66 @@ Object subclass: Game [
         ].
     ]
 
+    hasNotes [
+        ^(((self findByName: 'note1' and: playerObjects) ~= nil) &
+        ((self findByName: 'note2' and: playerObjects) ~= nil) &
+        ((self findByName: 'note3' and: playerObjects) ~= nil) &
+        ((self findByName: 'note4' and: playerObjects) ~= nil) &
+        ((self findByName: 'note5' and: playerObjects) ~= nil))
+    ]
+
+    atOcean [
+        ^((currentLocation = ocean1) | (currentLocation = ocean2) | (currentLocation = ocean3))
+    ]
+
+    hasRaft [
+        ^((self findByName: 'raft' and: playerObjects) ~= nil)
+    ]
+
+    hasPeople [
+        ^((self findByName: 'people' and: playerObjects) ~= nil)
+    ]
+
     leave [
-        | object |
-        currentLocation getName = 'Ocean'
+        (self hasRaft) & (self atOcean)
+        ifTrue: [
+            (self hasNotes) & (self hasPeople)
+            ifTrue: [
+                Transcript show: 'You left the island. You rescued rest of the passengers and complete the story. You won!'; cr.
+                isGameOver := true.
+                ^true.
+            ].
+
+            self hasNotes
+            ifTrue: [
+                Transcript show: 'You left the island. You complete the story, but didn''t find rest of the passengers.'; cr.
+                isGameOver := true.
+                ^true.
+            ].
+
+            self hasPeople
+            ifTrue: [
+                Transcript show: 'You left the island. You found the rest of the passengers, but didn''t know their full story.'; cr.
+                isGameOver := true.
+                ^true.
+            ].
+
+            Transcript show: 'You left the island, but dont''t know anything.'; cr.
+            isGameOver := true.
+            ^true.
+        ].
+
+        self atOcean
         ifFalse: [
-            Transcript show: 'You aren''t at the ocea'; cr.
+            Transcript show: 'You aren''t at the ocean.'; cr.
             ^false.
         ].
 
-        object := self findByName: 'raft' and: playerObjects.
-        object = nil
-        ifTrue: [
+        self hasRaft
+        ifFalse: [
             Transcript show: 'You can''t swim across the ocean. You need boat.'; cr.
             ^false.
         ].
-
-        Transcript show: 'You left the island by raft. You won!'; cr.
-        isGameOver := true.
-        ^true.
     ]
 
     "Run the game."
