@@ -21,6 +21,7 @@ Object subclass: Game [
     
     | exchangeRope exchangeAx exchangeMap exchangeMysteriousStone exchangeBanana exchangeBucket exchangePickax exchangeSword |
 
+    "texts"
     introductionText := #(
     ).
 
@@ -51,6 +52,7 @@ Object subclass: Game [
     ]
 
     init [
+        "objects"
         totem := GameObject newGameObject: 'totem' desc: '' pick: false use: true. 
         tree := GameObject newGameObject: 'tree' desc: '' pick: false use: false.
         stick := GameObject newGameObject: 'stick' desc: '' pick: true use: false.
@@ -112,6 +114,7 @@ Object subclass: Game [
         phone := GameObject newGameObject: 'phone' desc: 'Works, but no signal.' pick: true use: false.
         pond := GameObject newGameObject: 'pond' desc: '' pick: false use: true.
 
+        "exchanges"
         exchangeRope := Exchange newExchange: banana offerObject: rope 
             desc: 'This monkey was obviously just hungry. Monkey took the fruit and walked away. You can safely take the rope it was hanging on.'.
         exchangeAx := Exchange newExchange: phone offerObject: ax 
@@ -129,6 +132,7 @@ Object subclass: Game [
         exchangeSword := Exchange newExchange: rawIron offerObject: sword 
             desc: 'Looks like high quality ore. I''m about to forge a decent sword out of it.'.
 
+        "NPCs"
         ancientGuard := NPC newNPC: 'ancient_guard'
             desc: 'The statue shows a knight in full armor. However, his hands are empty...' 
             speech: 'Hello traveler. I used to be a ruthless knight but was cursed by the village shaman. Now I am only a stone statue. The shaman said the curse would be lifted if I became a "real warrior". I do not know what it means. Help me please and I will reward you generously.' 
@@ -146,6 +150,7 @@ Object subclass: Game [
             speech: 'Hello traveler. I am a local blacksmith. I could forge a simple sword for you or let you use my workshop, but unfortunately I don''t have the right resources. I heard that there are still deposits of iron left in the cave in the north of the island. If you give me a fish, I will give you my pickaxe so that you can mine the ore.' 
             exchange: {exchangePickax. exchangeSword}.
 
+        "recipes"
         recipeBanana := Recipe newRecipe: stone gameObject2: bananaTree res: banana.
         recipeWood := Recipe newRecipe: ax gameObject2: tree res: wood.
         recipeMast := Recipe newRecipe: ax gameObject2: palm res: mast.
@@ -171,6 +176,7 @@ Object subclass: Game [
         recipeSword2 := Recipe newRecipe: hotSword gameObject2: pond res: sword.
         recipeHotSword := Recipe newRecipe: swordForm gameObject2: anvil res: hotSword.
         
+        "locations"
         meadow1 := Location newLocation: 1 newName: 'meadow1' desc: 'You are in a meadow with a huge wooden totem in the middle.' 
                     northLoc: nil eastLoc: 2 southLoc: 7 westLoc: nil locGameObjects: {totem.} locNPCs: {} isDark: false.
         forest1 := Location newLocation: 2 newName: 'forest' desc: 'You are in the forest.' 
@@ -264,33 +270,15 @@ Object subclass: Game [
                     ocean3. beach3. pantry. house2. oldHouse. basement}.
     ]
 
-    "Print strings from array in separate lines."
+    "describing"
     printLines: anArray [
         anArray do: [ :string | Transcript show: string; cr ]
-    ]
-
-    printIntroduction [
-       self printLines: introductionText.
-    ]
-
-    printInstructions [
-        self printLines: instructionsText.
-    ]
-
-    readCommand [
-        Transcript cr.
-        Transcript show: '> '.
-        ^FileStream stdin nextLine
     ]
 
     printNames: objects [
         objects do: [ :object | Transcript show: object getName.
                                 Transcript show: ', '. ].
         Transcript cr.
-    ]
-
-    printInventory[
-        self printNames: playerObjects.
     ]
 
     printLocation: location [
@@ -312,28 +300,6 @@ Object subclass: Game [
         ].
         Transcript show: object getDescription; cr.
         ^true.
-    ]
-
-    examine: objectName [
-        | object |
-        object := self findByName: objectName and: playerObjects, currentLocation getObjects, currentLocation getNPCs.
-        object = nil
-        ifTrue: [
-            Transcript show: 'There is no ', objectName; cr.
-            ^false.
-        ].
-        self printGameObjectDescription: object. 
-        ^true
-    ]
-
-    findByName: name and: anArray [
-        anArray do: [ :object | object getName = name ifTrue: [ ^object ]].
-        ^nil.
-    ]
-
-    findLocationByID: index [
-        locations do: [ :location | location getId = index ifTrue: [ ^location ]].
-        ^nil.
     ]
 
     printDirection: direction and: char [
@@ -364,23 +330,82 @@ Object subclass: Game [
         self printDirection: west and: 'w'.
         self printDirection: south and: 's'.
     ]
-    
-    updateLocation: locationIndex [
-        | newLocation |
-        newLocation := self findLocationByID: locationIndex.
-        newLocation = nil
+
+    "interacting with NPCs"
+    talkNPC: npcName [
+        | npc |
+        npc := self findByName: npcName and: currentLocation getNPCs.
+
+        npc = nil
         ifTrue: [
-            Transcript show: 'You can''t go that way'; cr.
+            Transcript show: 'There is no ', npcName; cr.
             ^false.
         ].
 
-        (self findByName: 'map' and: playerObjects) = nil 
-        ifFalse: [
-            newLocation discover.
-        ].
-        currentLocation := newLocation.
-        self printLocation: currentLocation.
+        npc talk.
         ^true.
+    ]
+
+    findExchangeByObject: needObject and: exchanges [
+        exchanges do: [ :exchange | exchange getNeededObject = needObject ifTrue:[
+            ^exchange.
+        ]].
+        ^nil.
+    ]
+
+    giveNPC: objectName and: npcName [
+        | object npc newObject exchange |
+        npc := self findByName: npcName and: currentLocation getNPCs.
+
+        npc = nil
+        ifTrue: [
+            Transcript show: 'There is no ', npcName; cr.
+            ^false.
+        ].
+
+        object := self findByName: objectName and: playerObjects.
+        object = nil
+        ifTrue: [
+            Transcript show: 'You don''t have ', objectName; cr.
+            ^false.
+        ].
+
+        exchange := self findExchangeByObject: object and: npc getExchanges.
+
+        exchange = nil
+        ifTrue: [
+            Transcript show: 'He doesn''t want this'; cr.
+            ^false.
+        ].
+
+        newObject := exchange getOfferedObject.
+        playerObjects add: newObject.
+        Transcript show: exchange getDescription; cr.
+        Transcript show: 'You got ', newObject getName; cr.
+        playerObjects remove: object.
+        ^true.
+    ]
+
+    "interacting with items"
+    printInventory[
+        self printNames: playerObjects.
+    ]
+
+    examine: objectName [
+        | object |
+        object := self findByName: objectName and: playerObjects, currentLocation getObjects, currentLocation getNPCs.
+        object = nil
+        ifTrue: [
+            Transcript show: 'There is no ', objectName; cr.
+            ^false.
+        ].
+        self printGameObjectDescription: object. 
+        ^true
+    ]
+
+    findByName: name and: anArray [
+        anArray do: [ :object | object getName = name ifTrue: [ ^object ]].
+        ^nil.
     ]
 
     pick: objectName [
@@ -492,71 +517,31 @@ Object subclass: Game [
         ^true.
     ]
 
-    talkNPC: npcName [
-        | npc |
-        npc := self findByName: npcName and: currentLocation getNPCs.
-
-        npc = nil
-        ifTrue: [
-            Transcript show: 'There is no ', npcName; cr.
-            ^false.
-        ].
-
-        npc talk.
-        ^true.
-    ]
-
-    findExchangeByObject: needObject and: exchanges [
-        exchanges do: [ :exchange | exchange getNeededObject = needObject ifTrue:[
-            ^exchange.
-        ]].
+    "moving"
+    findLocationByID: index [
+        locations do: [ :location | location getId = index ifTrue: [ ^location ]].
         ^nil.
     ]
 
-    giveNPC: objectName and: npcName [
-        | object npc newObject exchange |
-        npc := self findByName: npcName and: currentLocation getNPCs.
-
-        npc = nil
+    updateLocation: locationIndex [
+        | newLocation |
+        newLocation := self findLocationByID: locationIndex.
+        newLocation = nil
         ifTrue: [
-            Transcript show: 'There is no ', npcName; cr.
+            Transcript show: 'You can''t go that way'; cr.
             ^false.
         ].
 
-        object := self findByName: objectName and: playerObjects.
-        object = nil
-        ifTrue: [
-            Transcript show: 'You don''t have ', objectName; cr.
-            ^false.
+        (self findByName: 'map' and: playerObjects) = nil 
+        ifFalse: [
+            newLocation discover.
         ].
-
-        exchange := self findExchangeByObject: object and: npc getExchanges.
-
-        exchange = nil
-        ifTrue: [
-            Transcript show: 'He doesn''t want this'; cr.
-            ^false.
-        ].
-
-        newObject := exchange getOfferedObject.
-        playerObjects add: newObject.
-        Transcript show: exchange getDescription; cr.
-        Transcript show: 'You got ', newObject getName; cr.
-        playerObjects remove: object.
+        currentLocation := newLocation.
+        self printLocation: currentLocation.
         ^true.
     ]
 
-    checkNumOfArgs: subs and: num [
-        subs size = num
-        ifTrue: [
-            ^true.
-        ]
-        ifFalse: [
-            Transcript show: 'Wrong number of arguments. Required: ', num printString; cr.
-            ^false.
-        ].
-    ]
-
+    "leaving an island"
     hasNotes [
         ^(((self findByName: 'note1' and: playerObjects) ~= nil) &
         ((self findByName: 'note2' and: playerObjects) ~= nil) &
@@ -617,6 +602,32 @@ Object subclass: Game [
             Transcript show: 'You can''t swim across the ocean. You need boat.'; cr.
             ^false.
         ].
+    ]
+    
+    "commands"
+    checkNumOfArgs: subs and: num [
+        subs size = num
+        ifTrue: [
+            ^true.
+        ]
+        ifFalse: [
+            Transcript show: 'Wrong number of arguments. Required: ', num printString; cr.
+            ^false.
+        ].
+    ]
+
+    printIntroduction [
+       self printLines: introductionText.
+    ]
+
+    printInstructions [
+        self printLines: instructionsText.
+    ]
+
+    readCommand [
+        Transcript cr.
+        Transcript show: '> '.
+        ^FileStream stdin nextLine
     ]
 
     "Run the game."
