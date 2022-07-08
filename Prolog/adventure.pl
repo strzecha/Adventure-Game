@@ -455,7 +455,7 @@ notice_objects_at(Location) :-
         write(Object), write(', '),
         fail.
 
-/* This rule tells how to look about you */
+/* These rules tell how to look about you */
 not_empty(Location) :-
         at(_, Location), !.
 
@@ -535,7 +535,6 @@ instructions :-
         nl,
         write('Enter commands using standard Prolog syntax.'), nl,
         write('Available commands are:'), nl,
-        write('start.                   -- to start the game.'), nl,
         write('n.  s.  e.  w.           -- to go in that direction.'), nl,
         write('take(Object).            -- to pick up an object.'), nl,
         write('drop(Object).            -- to put down an object.'), nl,

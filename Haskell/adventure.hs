@@ -107,7 +107,6 @@ introductionText = [
 
 instructionsText = [
     "Available commands are:",
-    "start                  -- to start the game.",
     "n  s  e  w             -- to go in that direction.", 
     "take Object            -- to pick up an object.",
     "drop Object            -- to put down an object.",
